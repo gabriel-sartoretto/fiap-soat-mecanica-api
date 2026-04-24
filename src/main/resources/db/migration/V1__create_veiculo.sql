@@ -1,0 +1,4 @@
+CREATE TABLE veiculo (
+    id SERIAL PRIMARY KEY,
+    placa VARCHAR(10) NOT NULL
+);

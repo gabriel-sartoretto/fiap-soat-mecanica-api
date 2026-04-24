@@ -1,0 +1,28 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: mecanica-db
+    environment:
+      POSTGRES_DB: mecanica
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234567
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: mecanica-api
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mecanica
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234567
+
+volumes:
+  postgres_data:
