@@ -1,4 +1,4 @@
-package br.com.fiap.soat.mecanica.infrastructure.persistence.veiculo;
+package br.com.fiap.soat.mecanica.adapters.out.persistence.veiculo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

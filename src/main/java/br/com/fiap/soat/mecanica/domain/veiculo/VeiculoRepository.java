@@ -1,6 +1,11 @@
 package br.com.fiap.soat.mecanica.domain.veiculo;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public interface VeiculoRepository {
 
-    void salvar(Veiculo veiculo);
+    Veiculo salvar(Veiculo veiculo);
+
+    Optional<Veiculo> buscarPorId(UUID id);
 }
