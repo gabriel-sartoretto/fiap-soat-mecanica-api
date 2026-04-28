@@ -9,7 +9,7 @@ public class CNPJ {
     private final String value;
 
     public CNPJ(String value) {
-        if (value == null || value.isBlank()) {
+        if (value.isBlank()) {
             throw new RegraNegocioException("CNPJ não pode ser vazio");
         }
 
