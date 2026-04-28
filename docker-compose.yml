@@ -22,8 +22,8 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mecanica
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: ${DB_SECRET}
-      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_PASSWORD: 1234567
+      JWT_SECRET: Ie+o8U7OfpdBdhHUp9mQ+U/8ayI20O2Tp1+35tR2jabK4n2w4BreTofRsQDqzl9aUVpt2nu0azdv3tPWZkROZA==
 
 volumes:
   postgres_data:

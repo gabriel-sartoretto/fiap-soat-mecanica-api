@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class VeiculoController {
 
     @PostMapping
     @Operation(summary = "Cadastrar um veículo")
-    //@PreAuthorize("")
+    @PreAuthorize("hasRole('ATENDENTE')")
     public ResponseEntity<VeiculoResponse> cadastrar(@Valid @RequestBody VeiculoIncluirRequest request) {
         Veiculo veiculo = cadastrarVeiculoUseCase.executar(request);
         return ResponseEntity.ok(VeiculoResponseMapper.toResponse(veiculo));
@@ -32,7 +33,7 @@ public class VeiculoController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar um veículo por ID")
-    //@PreAuthorize("")
+    @PreAuthorize("hasRole('ATENDENTE')")
     public ResponseEntity<VeiculoResponse> buscarPorId(@PathVariable("id") UUID id) {
         Veiculo veiculo = buscarVeiculoPorIdUseCase.executar(id);
         return ResponseEntity.ok(VeiculoResponseMapper.toResponse(veiculo));

@@ -1,6 +1,7 @@
 package br.com.fiap.soat.mecanica.adapters.in.web.auth;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.auth.dto.LoginRequest;
+import br.com.fiap.soat.mecanica.adapters.in.web.exception.SenhaInvalidaException;
 import br.com.fiap.soat.mecanica.adapters.out.security.JwtService;
 import br.com.fiap.soat.mecanica.application.usuario.BuscarUsuarioPorEmailUseCase;
 import br.com.fiap.soat.mecanica.application.usuario.PasswordEncoderPort;
@@ -28,7 +29,7 @@ public class AuthController {
         var usuario = buscarUsuarioPorEmailUseCase.executar(request.email());
 
         if (!encoder.matches(request.senha(), usuario.getSenha())) {
-            throw new RuntimeException("Senha inválida");
+            throw new SenhaInvalidaException("Senha inválida");
         }
 
         String token = jwtService.gerarToken(usuario.getEmail());

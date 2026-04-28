@@ -27,7 +27,7 @@ public class VeiculoEntity extends PrincipalEntity {
     @Column(name = "modelo", nullable = false)
     private String modelo;
 
-    @Column(name = "ano", nullable = false)
+    @Column(name = "ano", length = 4, nullable = false)
     private String ano;
 
     @Column(name = "quantidade_eixos", nullable = false)
