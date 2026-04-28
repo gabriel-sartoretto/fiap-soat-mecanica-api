@@ -1,4 +1,4 @@
-package br.com.fiap.soat.mecanica.application.usuario;
+package br.com.fiap.soat.mecanica.application.usuario.usecase;
 
 import br.com.fiap.soat.mecanica.domain.exception.RecursoNaoEncontradoException;
 import br.com.fiap.soat.mecanica.domain.usuario.Usuario;

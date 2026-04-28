@@ -1,4 +1,4 @@
-package br.com.fiap.soat.mecanica.application.veiculo;
+package br.com.fiap.soat.mecanica.application.veiculo.usecase;
 
 import br.com.fiap.soat.mecanica.domain.veiculo.VeiculoRepository;
 import br.com.fiap.soat.mecanica.domain.exception.RecursoNaoEncontradoException;

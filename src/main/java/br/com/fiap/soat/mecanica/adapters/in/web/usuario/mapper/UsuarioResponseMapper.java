@@ -6,6 +6,6 @@ import br.com.fiap.soat.mecanica.domain.usuario.Usuario;
 public class UsuarioResponseMapper {
 
     public static UsuarioResponse toResponse(Usuario u) {
-        return new UsuarioResponse(u.getId(), u.getStatus(), u.getNome(), u.getEmail(), u.getCargoEnum());
+        return new UsuarioResponse(u.getId(), u.getStatus(), u.getNome(), u.getEmail().getValue(), u.getCargoEnum());
     }
 }

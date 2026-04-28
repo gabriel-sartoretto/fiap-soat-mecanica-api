@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.adapters.out.security;
 
-import br.com.fiap.soat.mecanica.application.usuario.PasswordEncoderPort;
+import br.com.fiap.soat.mecanica.application.usuario.usecase.PasswordEncoderPort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

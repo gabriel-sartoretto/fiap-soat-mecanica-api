@@ -18,7 +18,7 @@ public class VeiculoEntity extends PrincipalEntity {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "placa")
+    @Column(name = "placa", unique = true, nullable = false)
     private String placa;
 
     @Column(name = "marca", nullable = false)

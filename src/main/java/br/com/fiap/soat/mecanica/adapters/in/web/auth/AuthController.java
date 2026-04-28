@@ -3,8 +3,8 @@ package br.com.fiap.soat.mecanica.adapters.in.web.auth;
 import br.com.fiap.soat.mecanica.adapters.in.web.auth.dto.LoginRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.exception.SenhaInvalidaException;
 import br.com.fiap.soat.mecanica.adapters.out.security.JwtService;
-import br.com.fiap.soat.mecanica.application.usuario.BuscarUsuarioPorEmailUseCase;
-import br.com.fiap.soat.mecanica.application.usuario.PasswordEncoderPort;
+import br.com.fiap.soat.mecanica.application.usuario.usecase.BuscarUsuarioPorEmailUseCase;
+import br.com.fiap.soat.mecanica.application.usuario.usecase.PasswordEncoderPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +32,7 @@ public class AuthController {
             throw new SenhaInvalidaException("Senha inválida");
         }
 
-        String token = jwtService.gerarToken(usuario.getEmail());
+        String token = jwtService.gerarToken(usuario.getEmail().getValue());
 
         return ResponseEntity.ok(Map.of("token", token));
     }

@@ -1,8 +1,9 @@
-package br.com.fiap.soat.mecanica.application.usuario;
+package br.com.fiap.soat.mecanica.application.usuario.usecase;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.usuario.dto.UsuarioIncluirRequest;
 import br.com.fiap.soat.mecanica.domain.usuario.Usuario;
 import br.com.fiap.soat.mecanica.domain.usuario.UsuarioRepository;
+import br.com.fiap.soat.mecanica.domain.valueobject.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class CadastrarUsuarioUseCase {
 
     public Usuario executar(UsuarioIncluirRequest request) {
         String senhaHash = passwordEncoderPort.encode(request.senha());
-        Usuario usuario = new Usuario(request.nome(), request.email(),
+        Usuario usuario = new Usuario(request.nome(), new Email(request.email()),
                 senhaHash, request.cargoEnum());
         return repository.salvar(usuario);
     }

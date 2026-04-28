@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.adapters.in.web.security;
 
-import br.com.fiap.soat.mecanica.application.usuario.BuscarUsuarioPorEmailUseCase;
+import br.com.fiap.soat.mecanica.application.usuario.usecase.BuscarUsuarioPorEmailUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         var usuario = buscarUsuarioPorEmailUseCase.executar(email);
 
         return new org.springframework.security.core.userdetails.User(
-                usuario.getEmail(),
+                usuario.getEmail().getValue(),
                 usuario.getSenha(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getCargoEnum().name()))
         );

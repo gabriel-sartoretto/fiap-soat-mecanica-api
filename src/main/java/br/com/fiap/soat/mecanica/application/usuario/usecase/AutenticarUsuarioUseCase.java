@@ -1,4 +1,4 @@
-package br.com.fiap.soat.mecanica.application.usuario;
+package br.com.fiap.soat.mecanica.application.usuario.usecase;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.auth.dto.LoginRequest;
 import lombok.RequiredArgsConstructor;

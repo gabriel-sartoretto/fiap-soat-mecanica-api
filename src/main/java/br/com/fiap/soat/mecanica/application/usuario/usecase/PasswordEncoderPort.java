@@ -1,4 +1,4 @@
-package br.com.fiap.soat.mecanica.application.usuario;
+package br.com.fiap.soat.mecanica.application.usuario.usecase;
 
 public interface PasswordEncoderPort {
 
