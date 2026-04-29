@@ -20,7 +20,8 @@ public class VeiculoMapper {
 
     public Veiculo toDomain(VeiculoEntity veiculoEntity) {
         Veiculo veiculo = new Veiculo(new Placa(veiculoEntity.getPlaca()), veiculoEntity.getMarca(),
-                veiculoEntity.getModelo(), veiculoEntity.getAno(), veiculoEntity.getQuantidadeEixos());
+                veiculoEntity.getModelo(), veiculoEntity.getAno(), veiculoEntity.getQuantidadeEixos(),
+                veiculoEntity.getClienteId());
         veiculo.setId(veiculoEntity.getId());
         return veiculo;
     }

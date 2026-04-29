@@ -13,19 +13,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VeiculoRepositoryImpl implements VeiculoRepository {
 
-    private final VeiculoJpaRepository jpaRepository;
-    private final VeiculoMapper mapper;
+    private final VeiculoJpaRepository veiculoJpaRepository;
+    private final VeiculoMapper veiculoMapper;
 
     @Override
     public Veiculo salvar(Veiculo veiculo) {
-        VeiculoEntity veiculoEntity = mapper.toEntity(veiculo);
-        jpaRepository.save(veiculoEntity);
-        return mapper.toDomain(veiculoEntity);
+        VeiculoEntity veiculoEntity = veiculoMapper.toEntity(veiculo);
+        veiculoJpaRepository.save(veiculoEntity);
+        return veiculoMapper.toDomain(veiculoEntity);
     }
 
     @Override
     public Optional<Veiculo> buscarPorId(UUID id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return veiculoJpaRepository.findById(id)
+                .map(veiculoMapper::toDomain);
     }
 }

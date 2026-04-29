@@ -1,8 +1,9 @@
 package br.com.fiap.soat.mecanica.adapters.out.persistence.cliente;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -15,7 +16,8 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = "email")
         }
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ClienteEntity {
 
@@ -23,19 +25,19 @@ public class ClienteEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(name = "nome", nullable = false, length = 255)
     private String nome;
 
-    @Column(name = "cpf", nullable = false)
+    @Column(name = "cpf", length = 11)
     private String cpf;
 
-    @Column(name = "cnpj")
+    @Column(name = "cnpj", length = 14)
     private String cnpj;
-//TODO ARRUMAR ESSAS VIARÁVEIS
-    @Column(name = "email", nullable = false)
+
+    @Column(name = "email", nullable = false, length = 255)
     private String email;
 
-    @Column(name = "telefone", nullable = false)
+    @Column(name = "telefone", length = 20)
     private String telefone;
 
     @Column(name = "usuario_id", nullable = false)

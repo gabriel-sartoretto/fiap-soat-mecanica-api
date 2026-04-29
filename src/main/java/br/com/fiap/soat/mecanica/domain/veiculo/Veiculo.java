@@ -2,12 +2,12 @@ package br.com.fiap.soat.mecanica.domain.veiculo;
 
 import br.com.fiap.soat.mecanica.domain.Principal;
 import br.com.fiap.soat.mecanica.domain.valueobject.Placa;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class Veiculo extends Principal {
 
@@ -23,11 +23,18 @@ public class Veiculo extends Principal {
 
     private int quantidadeEixos;
 
-    public Veiculo(Placa placa, String marca, String modelo, String ano, int quantidadeEixos) {
+    private UUID clienteId;
+
+    public Veiculo(Placa placa, String marca, String modelo, String ano, int quantidadeEixos, UUID clienteId) {
         this.placa = placa;
         this.marca = marca;
         this.modelo = modelo;
         this.ano = ano;
         this.quantidadeEixos = quantidadeEixos;
+        this.clienteId = clienteId;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

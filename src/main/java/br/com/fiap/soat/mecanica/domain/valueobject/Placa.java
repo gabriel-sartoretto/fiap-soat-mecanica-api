@@ -1,8 +1,8 @@
 package br.com.fiap.soat.mecanica.domain.valueobject;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class Placa {
 
     private final String value;

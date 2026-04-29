@@ -5,9 +5,10 @@ import br.com.fiap.soat.mecanica.domain.cliente.Cliente;
 
 public class ClienteResponseMapper {
 
-    public static ClienteResponse toResponse(Cliente c) {
-        return new ClienteResponse(c.getId(), c.getStatus(), c.getNome(), c.getCpf().getValue(),
-                c.getCnpj() == null ? null : c.getCnpj().getValue(), c.getEmail().getValue(),
-                c.getTelefone() == null ? null : c.getTelefone().getValue(), c.getUsuarioId());
+    public static ClienteResponse toResponse(Cliente cliente) {
+        return new ClienteResponse(cliente.getId(), cliente.getStatus(), cliente.getNome(),
+                cliente.getCpf() == null ? null : cliente.getCpf().getValue(),
+                cliente.getCnpj() == null ? null : cliente.getCnpj().getValue(), cliente.getEmail().getValue(),
+                cliente.getTelefone() == null ? null : cliente.getTelefone().getValue(), cliente.getUsuarioId());
     }
 }

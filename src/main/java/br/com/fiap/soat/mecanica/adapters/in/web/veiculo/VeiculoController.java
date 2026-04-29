@@ -27,7 +27,8 @@ public class VeiculoController {
     @Operation(summary = "Cadastrar um veículo")
     @PreAuthorize("hasRole('ATENDENTE')")
     public ResponseEntity<VeiculoResponse> cadastrar(@Valid @RequestBody VeiculoIncluirRequest request) {
-        Veiculo veiculo = cadastrarVeiculoUseCase.executar(request);
+        Veiculo veiculo = cadastrarVeiculoUseCase.executar(request.placa(), request.marca(), request.modelo(),
+                request.ano(), request.quantidadeEixos(), request.clienteId());
         return ResponseEntity.ok(VeiculoResponseMapper.toResponse(veiculo));
     }
 

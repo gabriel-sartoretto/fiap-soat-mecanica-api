@@ -1,10 +1,7 @@
 package br.com.fiap.soat.mecanica.adapters.in.web.auth;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.auth.dto.LoginRequest;
-import br.com.fiap.soat.mecanica.adapters.in.web.exception.SenhaInvalidaException;
-import br.com.fiap.soat.mecanica.adapters.out.security.JwtService;
-import br.com.fiap.soat.mecanica.application.usuario.usecase.BuscarUsuarioPorEmailUseCase;
-import br.com.fiap.soat.mecanica.application.usuario.usecase.PasswordEncoderPort;
+import br.com.fiap.soat.mecanica.application.usuario.usecase.AutenticarUsuarioUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,20 +16,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final BuscarUsuarioPorEmailUseCase buscarUsuarioPorEmailUseCase;
-    private final PasswordEncoderPort encoder;
-    private final JwtService jwtService;
+    private final AutenticarUsuarioUseCase autenticarUsuarioUseCase;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
-        var usuario = buscarUsuarioPorEmailUseCase.executar(request.email());
-
-        if (!encoder.matches(request.senha(), usuario.getSenha())) {
-            throw new SenhaInvalidaException("Senha inválida");
-        }
-
-        String token = jwtService.gerarToken(usuario.getEmail().getValue());
+        String token = autenticarUsuarioUseCase.login(request.email(), request.senha());
 
         return ResponseEntity.ok(Map.of("token", token));
     }

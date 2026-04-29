@@ -2,8 +2,8 @@ package br.com.fiap.soat.mecanica.domain.enums;
 
 public enum CargoEnum {
     ATENDENTE("Atendente"),
-    MECANICO("Meânico"),
-    ALMOXARIFADO("Almocharifado");
+    MECANICO("Mecânico"),
+    ALMOXARIFE("Almoxarife");
 
     private final String descricao;
 

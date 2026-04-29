@@ -3,13 +3,15 @@ package br.com.fiap.soat.mecanica.adapters.out.persistence;
 import br.com.fiap.soat.mecanica.domain.enums.StatusRecursoEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @MappedSuperclass
 @JsonIgnoreProperties(value = {"dataCriacao", "criadoPor", "dataModificacao", "modificadoPor", "versao"})

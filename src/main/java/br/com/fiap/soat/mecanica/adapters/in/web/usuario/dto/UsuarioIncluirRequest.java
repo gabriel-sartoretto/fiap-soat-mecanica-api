@@ -19,6 +19,6 @@ public record UsuarioIncluirRequest(
         String senha,
 
         @NotNull(message = "O cargo não pode ser nulo")
-        @Schema(allowableValues = "ATENDENTE, MECANICO, ALMOXARIFADO")
+        @Schema(allowableValues = "ATENDENTE, MECANICO, ALMOXARIFE")
         CargoEnum cargoEnum
 ) {}

@@ -14,7 +14,7 @@ public class ClienteMapper {
     public ClienteEntity toEntity(Cliente cliente) {
         ClienteEntity clienteEntity = new ClienteEntity();
         clienteEntity.setNome(cliente.getNome());
-        clienteEntity.setCpf(cliente.getCpf().getValue());
+        clienteEntity.setCpf(cliente.getCpf() == null ? null : cliente.getCpf().getValue());
         clienteEntity.setCnpj(cliente.getCnpj() == null ? null : cliente.getCnpj().getValue());
         clienteEntity.setEmail(cliente.getEmail().getValue());
         clienteEntity.setTelefone(cliente.getTelefone() == null ? null : cliente.getTelefone().getValue());
@@ -23,9 +23,14 @@ public class ClienteMapper {
     }
 
     public Cliente toDomain(ClienteEntity clienteEntity) {
-        Cliente cliente = new Cliente(clienteEntity.getNome(), new CPF(clienteEntity.getCpf()),
-                new CNPJ(clienteEntity.getCnpj()), new Email(clienteEntity.getEmail()),
-                new Telefone(clienteEntity.getTelefone()), clienteEntity.getUsuarioId());
+        Cliente cliente = new Cliente(
+                clienteEntity.getNome(),
+                clienteEntity.getCpf() == null ? null : new CPF(clienteEntity.getCpf()),
+                clienteEntity.getCnpj() == null ? null : new CNPJ(clienteEntity.getCnpj()),
+                new Email(clienteEntity.getEmail()),
+                clienteEntity.getTelefone() == null ? null : new Telefone(clienteEntity.getTelefone()),
+                clienteEntity.getUsuarioId()
+        );
         cliente.setId(clienteEntity.getId());
         return cliente;
     }

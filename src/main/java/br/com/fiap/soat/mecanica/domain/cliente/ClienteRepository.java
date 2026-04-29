@@ -1,10 +1,20 @@
 package br.com.fiap.soat.mecanica.domain.cliente;
 
+import br.com.fiap.soat.mecanica.domain.valueobject.CNPJ;
+import br.com.fiap.soat.mecanica.domain.valueobject.CPF;
+
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ClienteRepository {
 
     Cliente salvar(Cliente cliente);
 
-    Optional<Cliente> buscarPorDocumento(String documento);
+    Optional<Cliente> buscarPorId(UUID id);
+
+    Optional<Cliente> buscarPorCpf(CPF documento);
+
+    Optional<Cliente> buscarPorCnpj(CNPJ documento);
+
+    Optional<Cliente> buscarPorUsuarioId(UUID usuarioId);
 }

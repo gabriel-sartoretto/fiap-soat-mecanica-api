@@ -1,9 +1,9 @@
 package br.com.fiap.soat.mecanica.domain.valueobject;
 
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class Email {
 
     private final String value;
