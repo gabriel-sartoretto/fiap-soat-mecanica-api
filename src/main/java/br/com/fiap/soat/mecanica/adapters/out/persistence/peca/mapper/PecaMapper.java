@@ -22,7 +22,6 @@ public class PecaMapper {
         Peca peca = new Peca(pecaEntity.getNome(), pecaEntity.getMarca(),
                 pecaEntity.getValorUnitario(), pecaEntity.getQuantidadeEstoque());
         peca.setId(pecaEntity.getId());
-        peca.setStatus(pecaEntity.getStatus());
         return peca;
     }
 }
