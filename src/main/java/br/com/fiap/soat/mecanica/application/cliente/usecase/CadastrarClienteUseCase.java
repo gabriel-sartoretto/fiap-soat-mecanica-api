@@ -17,6 +17,7 @@ public class CadastrarClienteUseCase {
 
     private final ClienteRepository repository;
 
+<<<<<<< HEAD
     public Cliente executar(String nome, String cpf, String cnpj, String email, String telefone, UUID usuarioId) {
         Cliente cliente = new Cliente(
                 nome,
@@ -27,5 +28,9 @@ public class CadastrarClienteUseCase {
                 usuarioId
         );
         return repository.salvar(cliente);
+=======
+    public Cliente executar(ClienteIncluirRequest request) {
+        throw new UnsupportedOperationException("Cadastro de cliente ainda não implementado.");
+>>>>>>> 1b337a9 (feat: implementação módulo de peças com validações e segurança)
     }
 }
