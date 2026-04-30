@@ -1,9 +1,8 @@
 package br.com.fiap.soat.mecanica.domain.veiculo;
 
 import br.com.fiap.soat.mecanica.domain.Principal;
-import br.com.fiap.soat.mecanica.domain.enums.CargoEnum;
+import br.com.fiap.soat.mecanica.domain.enums.StatusRecursoEnum;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
-import br.com.fiap.soat.mecanica.domain.valueobject.Email;
 import br.com.fiap.soat.mecanica.domain.valueobject.Placa;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +37,29 @@ public class Veiculo extends Principal {
         this.clienteId = clienteId;
     }
 
+    public static Veiculo reconstruir(
+            UUID id,
+            StatusRecursoEnum status,
+            Placa placa,
+            String marca,
+            String modelo,
+            String ano,
+            Integer quantidadeEixos,
+            UUID clienteId
+    ) {
+        Veiculo veiculo = new Veiculo();
+        veiculo.id = id;
+        veiculo.status = status;
+        veiculo.placa = placa;
+        veiculo.marca = marca;
+        veiculo.modelo = modelo;
+        veiculo.ano = ano;
+        veiculo.quantidadeEixos = quantidadeEixos;
+        veiculo.clienteId = clienteId;
+
+        return veiculo;
+    }
+
     public void alterar(String marca, String modelo, String ano, Integer quantidadeEixos) {
         validar(placa, marca, modelo, ano, quantidadeEixos, clienteId);
         this.marca = marca;
@@ -53,9 +75,5 @@ public class Veiculo extends Principal {
         if (ano == null) throw new RegraNegocioException("O Ano é obrigatório");
         if (quantidadeEixos == null) throw new RegraNegocioException("A quantidade de eixos é obrigatória");
         if (clienteId == null) throw new RegraNegocioException("O cliente dono é obrigatória");
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 }

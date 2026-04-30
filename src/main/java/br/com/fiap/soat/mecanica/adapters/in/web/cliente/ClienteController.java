@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.adapters.in.web.cliente;
 
-import br.com.fiap.soat.mecanica.adapters.in.web.cliente.dto.ClienteAlterarRecord;
+import br.com.fiap.soat.mecanica.adapters.in.web.cliente.dto.ClienteAlterarRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.cliente.dto.ClienteIncluirRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.cliente.dto.ClienteResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.cliente.mapper.ClienteResponseMapper;
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cliente")
+@RequestMapping("/clientes")
 public class ClienteController {
 
     private final CadastrarClienteUseCase cadastrarClienteUseCase;
@@ -40,7 +40,7 @@ public class ClienteController {
     @Operation(summary = "Alterar um cliente")
     public ResponseEntity<ClienteResponse> alterar(
             @PathVariable UUID id,
-            @Valid @RequestBody ClienteAlterarRecord request) {
+            @Valid @RequestBody ClienteAlterarRequest request) {
         Cliente cliente = alterarClienteUseCase.executar(id, request.nome(), request.telefone());
         return ResponseEntity.ok(ClienteResponseMapper.toResponse(cliente));
     }

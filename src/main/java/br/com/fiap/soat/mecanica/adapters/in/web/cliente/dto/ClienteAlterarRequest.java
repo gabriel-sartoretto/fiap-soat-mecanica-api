@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.adapters.in.web.cliente.dto;
 
-public record ClienteAlterarRecord(
+public record ClienteAlterarRequest(
         String nome,
         String telefone
 ) {

@@ -1,0 +1,31 @@
+package br.com.fiap.soat.mecanica.adapters.out.persistence.ordemServico;
+
+import br.com.fiap.soat.mecanica.adapters.out.persistence.ordemServico.mapper.OrdemServicoMapper;
+import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
+import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServicoRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+@RequiredArgsConstructor
+public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
+
+    private final OrdemServicoJpaRepository ordemServicoJpaRepository;
+    private final OrdemServicoMapper ordemServicoMapper;
+
+    @Override
+    public OrdemServico salvar(OrdemServico ordemServico) {
+        OrdemServicoEntity ordemServicoEntity = ordemServicoMapper.toEntity(ordemServico);
+        ordemServicoJpaRepository.save(ordemServicoEntity);
+        return ordemServicoMapper.toDomain(ordemServicoEntity);
+    }
+
+    @Override
+    public Optional<OrdemServico> buscarPorId(UUID id) {
+        return ordemServicoJpaRepository.findById(id)
+                .map(ordemServicoMapper::toDomain);
+    }
+}

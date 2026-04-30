@@ -12,7 +12,11 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "veiculos", schema = "public")
+@Table(
+        name = "veiculos",
+        indexes = {
+                @Index(name = "idx_veiculo_cliente_id", columnList = "cliente_id"),
+        })
 public class VeiculoEntity extends PrincipalEntity {
 
     @Id

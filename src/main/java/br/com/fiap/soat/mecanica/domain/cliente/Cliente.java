@@ -1,6 +1,7 @@
 package br.com.fiap.soat.mecanica.domain.cliente;
 
 import br.com.fiap.soat.mecanica.domain.Principal;
+import br.com.fiap.soat.mecanica.domain.enums.StatusRecursoEnum;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
 import br.com.fiap.soat.mecanica.domain.valueobject.CNPJ;
 import br.com.fiap.soat.mecanica.domain.valueobject.CPF;
@@ -31,6 +32,29 @@ public class Cliente extends Principal {
         this.email = email;
         this.telefone = telefone;
         this.usuarioId = usuarioId;
+    }
+
+    public static Cliente reconstruir(
+            UUID id,
+            StatusRecursoEnum status,
+            String nome,
+            CPF cpf,
+            CNPJ cnpj,
+            Email email,
+            Telefone telefone,
+            UUID usuarioId
+    ) {
+        Cliente cliente = new Cliente();
+
+        cliente.id = id;
+        cliente.status = status;
+        cliente.nome = nome;
+        cliente.cpf = cpf;
+        cliente.cnpj = cnpj;
+        cliente.email = email;
+        cliente.telefone = telefone;
+        cliente.usuarioId = usuarioId;
+        return cliente;
     }
 
     public void alterar(String nome, Telefone telefone) {

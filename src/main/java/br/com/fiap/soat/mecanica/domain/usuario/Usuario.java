@@ -2,9 +2,8 @@ package br.com.fiap.soat.mecanica.domain.usuario;
 
 import br.com.fiap.soat.mecanica.domain.Principal;
 import br.com.fiap.soat.mecanica.domain.enums.CargoEnum;
+import br.com.fiap.soat.mecanica.domain.enums.StatusRecursoEnum;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
-import br.com.fiap.soat.mecanica.domain.valueobject.CNPJ;
-import br.com.fiap.soat.mecanica.domain.valueobject.CPF;
 import br.com.fiap.soat.mecanica.domain.valueobject.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +26,26 @@ public class Usuario extends Principal {
         this.email = email;
         this.senha = senhaHash;
         this.cargoEnum = cargoEnum;
+    }
+
+    public static Usuario reconstruir(
+            UUID id,
+            StatusRecursoEnum status,
+            String nome,
+            String senhaHash,
+            Email email,
+            CargoEnum cargoEnum
+    ) {
+        Usuario usuario = new Usuario();
+
+        usuario.id = id;
+        usuario.status = status;
+        usuario.nome = nome;
+        usuario.senha = senhaHash;
+        usuario.email = email;
+        usuario.cargoEnum = cargoEnum;
+
+        return usuario;
     }
 
     private void validar(String nome, Email email, String senhaHash, CargoEnum cargoEnum) {

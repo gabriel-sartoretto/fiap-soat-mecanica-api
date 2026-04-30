@@ -23,15 +23,13 @@ public class ClienteMapper {
     }
 
     public Cliente toDomain(ClienteEntity clienteEntity) {
-        Cliente cliente = new Cliente(
-                clienteEntity.getNome(),
+        return Cliente.reconstruir(
+                clienteEntity.getId(), clienteEntity.getStatus(), clienteEntity.getNome(),
                 clienteEntity.getCpf() == null ? null : new CPF(clienteEntity.getCpf()),
                 clienteEntity.getCnpj() == null ? null : new CNPJ(clienteEntity.getCnpj()),
                 new Email(clienteEntity.getEmail()),
                 clienteEntity.getTelefone() == null ? null : new Telefone(clienteEntity.getTelefone()),
                 clienteEntity.getUsuarioId()
         );
-        cliente.setId(clienteEntity.getId());
-        return cliente;
     }
 }

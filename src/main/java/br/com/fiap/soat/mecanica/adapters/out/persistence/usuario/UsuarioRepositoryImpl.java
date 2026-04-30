@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,6 +26,12 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     @Override
     public Optional<Usuario> buscarPorEmail(String email) {
         return repository.findByEmail(email)
+                .map(usuarioMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Usuario> buscarPorId(UUID id) {
+        return repository.findById(id)
                 .map(usuarioMapper::toDomain);
     }
 }

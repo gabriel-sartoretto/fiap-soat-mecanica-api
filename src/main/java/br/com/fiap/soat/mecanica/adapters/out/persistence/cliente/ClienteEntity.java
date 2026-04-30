@@ -1,5 +1,6 @@
 package br.com.fiap.soat.mecanica.adapters.out.persistence.cliente;
 
+import br.com.fiap.soat.mecanica.adapters.out.persistence.PrincipalEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ClienteEntity {
+public class ClienteEntity extends PrincipalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

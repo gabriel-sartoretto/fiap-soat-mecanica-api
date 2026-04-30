@@ -18,10 +18,8 @@ public class UsuarioMapper {
     }
 
     public Usuario toDomain(UsuarioEntity usuarioEntity) {
-        Usuario usuario = new Usuario(
+        return Usuario.reconstruir(usuarioEntity.getId(), usuarioEntity.getStatus(),
                 usuarioEntity.getNome(), usuarioEntity.getSenha(),
                 new Email(usuarioEntity.getEmail()), usuarioEntity.getCargoEnum());
-        usuario.setId(usuarioEntity.getId());
-        return usuario;
     }
 }
