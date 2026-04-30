@@ -50,7 +50,17 @@ Isso irá subir um container PostgreSQL na porta **5432**.
 
 ---
 
-### 🔹 2. Rodar a aplicação
+### 🔹 2. Build do projeto (opcional)
+
+Caso seja o primeiro uso ou queira validar o build:
+
+```bash
+mvn clean install
+```
+
+---
+
+### 🔹 3. Rodar a aplicação
 
 ```bash
 mvn spring-boot:run
