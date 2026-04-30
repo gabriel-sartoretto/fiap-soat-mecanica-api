@@ -2,6 +2,9 @@ package br.com.fiap.soat.mecanica.domain.usuario;
 
 import br.com.fiap.soat.mecanica.domain.Principal;
 import br.com.fiap.soat.mecanica.domain.enums.CargoEnum;
+import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
+import br.com.fiap.soat.mecanica.domain.valueobject.CNPJ;
+import br.com.fiap.soat.mecanica.domain.valueobject.CPF;
 import br.com.fiap.soat.mecanica.domain.valueobject.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,13 +22,22 @@ public class Usuario extends Principal {
     private CargoEnum cargoEnum;
 
     public Usuario(String nome, String senhaHash, Email email, CargoEnum cargoEnum) {
-        if (senhaHash == null || senhaHash.isBlank()) {
-            throw new IllegalArgumentException("Senha inválida");
-        }
+        validar(nome, email, senhaHash, cargoEnum);
         this.nome = nome;
         this.email = email;
         this.senha = senhaHash;
         this.cargoEnum = cargoEnum;
+    }
+
+    private void validar(String nome, Email email, String senhaHash, CargoEnum cargoEnum) {
+        if (nome == null) throw new RegraNegocioException("Nome obrigatório");
+        if (email == null) throw new RegraNegocioException("E-mail é obrigatório");
+        if (senhaHash == null || senhaHash.isBlank()) {
+            throw new RegraNegocioException("Senha inválida");
+        }
+        if (cargoEnum == null) {
+            throw new RegraNegocioException("O Cargo é obrigatório");
+        }
     }
 
     public void setId(UUID id) {

@@ -33,7 +33,7 @@ public class VeiculoEntity extends PrincipalEntity {
     private String ano;
 
     @Column(name = "quantidade_eixos", nullable = false)
-    private int quantidadeEixos;
+    private Integer quantidadeEixos;
 
     @Column(name = "cliente_id", nullable = false)
     private UUID clienteId;

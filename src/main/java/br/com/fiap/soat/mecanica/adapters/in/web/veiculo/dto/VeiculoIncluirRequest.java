@@ -24,7 +24,7 @@ public record VeiculoIncluirRequest(
         String ano,
 
         @NotNull(message = "A quantiade de eixos não pode ser nula")
-        int quantidadeEixos,
+        Integer quantidadeEixos,
 
         @NotNull(message = "o ID do cliente não pode ser nula")
         UUID clienteId

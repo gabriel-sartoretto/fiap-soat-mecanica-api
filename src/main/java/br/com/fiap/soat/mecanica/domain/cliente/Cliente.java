@@ -24,15 +24,7 @@ public class Cliente extends Principal {
     private UUID usuarioId; // quem cadastrou relação fraca
 
     public Cliente(String nome, CPF cpf, CNPJ cnpj, Email email, Telefone telefone, UUID usuarioId) {
-        if (nome == null) throw new RegraNegocioException("Nome obrigatório");
-        if (usuarioId == null) throw new RegraNegocioException("Usuário que cadastrou é obrigatório");
-        if (cpf == null && cnpj == null) {
-            throw new RegraNegocioException("Cliente deve ter CPF ou CNPJ");
-        }
-
-        if (cpf != null && cnpj != null) {
-            throw new RegraNegocioException("Cliente não pode ter CPF e CNPJ ao mesmo tempo");
-        }
+        validar(nome, cpf, cnpj, usuarioId);
         this.nome = nome;
         this.cpf = cpf;
         this.cnpj = cnpj;
@@ -41,17 +33,24 @@ public class Cliente extends Principal {
         this.usuarioId = usuarioId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void alterar(String nome, Telefone telefone) {
+        validar(nome, cpf, cnpj, usuarioId);
+        this.nome = nome;
+        this.telefone = telefone;
     }
 
-    public void alterar(String nome, Telefone telefone) {
-        if (nome != null && !nome.isBlank()) {
-            this.nome = nome;
+    private void validar(String nome, CPF cpf, CNPJ cnpj, UUID usuarioId) {
+        if (nome == null) throw new RegraNegocioException("Nome obrigatório");
+        if (usuarioId == null) throw new RegraNegocioException("Usuário que cadastrou é obrigatório");
+        if (cpf == null && cnpj == null) {
+            throw new RegraNegocioException("Cliente deve ter CPF ou CNPJ");
         }
+        if (cpf != null && cnpj != null) {
+            throw new RegraNegocioException("Cliente não pode ter CPF e CNPJ ao mesmo tempo");
+        }
+    }
 
-        if (telefone != null) {
-            this.telefone = telefone;
-        }
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

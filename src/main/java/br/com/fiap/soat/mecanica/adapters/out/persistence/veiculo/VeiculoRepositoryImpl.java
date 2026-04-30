@@ -6,6 +6,7 @@ import br.com.fiap.soat.mecanica.adapters.out.persistence.veiculo.mapper.Veiculo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +28,19 @@ public class VeiculoRepositoryImpl implements VeiculoRepository {
     public Optional<Veiculo> buscarPorId(UUID id) {
         return veiculoJpaRepository.findById(id)
                 .map(veiculoMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Veiculo> buscarPorPlaca(String placa) {
+        return veiculoJpaRepository.findByPlaca(placa)
+                .map(veiculoMapper::toDomain);
+    }
+
+    @Override
+    public List<Veiculo> buscarTodosPorClienteId(UUID clienteId) {
+        return veiculoJpaRepository.findAllByClienteId(clienteId)
+                .stream()
+                .map(veiculoMapper::toDomain)
+                .toList();
     }
 }

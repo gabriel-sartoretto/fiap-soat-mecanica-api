@@ -12,5 +12,5 @@ public record VeiculoResponse(
         String marca,
         String modelo,
         String ano,
-        int quantidadeEixos
+        Integer quantidadeEixos
 ) {}
