@@ -6,13 +6,30 @@ import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+        List<FieldValidationError> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .sorted(Comparator.comparing(fieldError -> fieldError.getField()))
+                .map(fieldError -> new FieldValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
+                .toList();
+
+        return ResponseEntity
+                .badRequest()
+                .body(new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(), errors));
+    }
 
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<String> handle(RecursoNaoEncontradoException ex) {
@@ -36,5 +53,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(Map.of("erro", ex.getMessage()));
+    }
+
+    public record ValidationErrorResponse(int status, List<FieldValidationError> errors) {
+    }
+
+    public record FieldValidationError(String field, String message) {
     }
 }
