@@ -4,6 +4,7 @@ import br.com.fiap.soat.mecanica.domain.Principal;
 import br.com.fiap.soat.mecanica.domain.enums.SituacaoOrdemServico;
 import br.com.fiap.soat.mecanica.domain.enums.StatusRecursoEnum;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrdemServico extends Principal {
 
     private UUID id;
@@ -123,9 +124,5 @@ public class OrdemServico extends Principal {
         if (veiculoId == null) throw new RegraNegocioException("O veículo obrigatório");
 
         if (usuarioId == null) throw new RegraNegocioException("O mecânico obrigatório");
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 }

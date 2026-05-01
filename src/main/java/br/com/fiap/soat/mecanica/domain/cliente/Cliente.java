@@ -7,13 +7,14 @@ import br.com.fiap.soat.mecanica.domain.valueobject.CNPJ;
 import br.com.fiap.soat.mecanica.domain.valueobject.CPF;
 import br.com.fiap.soat.mecanica.domain.valueobject.Email;
 import br.com.fiap.soat.mecanica.domain.valueobject.Telefone;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cliente extends Principal {
 
     private UUID id;
@@ -72,9 +73,5 @@ public class Cliente extends Principal {
         if (cpf != null && cnpj != null) {
             throw new RegraNegocioException("Cliente não pode ter CPF e CNPJ ao mesmo tempo");
         }
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 }

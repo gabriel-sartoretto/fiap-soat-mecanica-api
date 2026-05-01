@@ -53,7 +53,7 @@ public class VeiculoController {
         return ResponseEntity.ok(VeiculoResponseMapper.toResponse(veiculo));
     }
 
-    @GetMapping("/cliente/{clienteId}")
+    @GetMapping("/por-cliente/{clienteId}")
     @PreAuthorize("hasRole('ATENDENTE')")
     @Operation(summary = "Buscar veículos por cliente ID")
     public ResponseEntity<List<VeiculoResponse>> buscarPorClienteId(
