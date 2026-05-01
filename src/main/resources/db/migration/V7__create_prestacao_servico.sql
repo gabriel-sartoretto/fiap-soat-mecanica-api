@@ -15,9 +15,11 @@ CREATE TABLE prestacao_servicos
 
     CONSTRAINT fk_prestacao_servico_servico
         FOREIGN KEY (servico_id)
-            REFERENCES servicos (id)
+            REFERENCES servicos (id),
+
+    CONSTRAINT uk_prestacao_servico_servico_ordem_servico
+        UNIQUE (ordem_servico_id, servico_id)
 );
 
-CONSTRAINT uk_prestacao_servico_servico_ordem_servico UNIQUE (ordem_servico_id, servico_id);
 CREATE INDEX idx_prestacao_servico_ordem_servico ON prestacao_servicos (ordem_servico_id);
 CREATE INDEX idx_prestacao_servico_servico ON prestacao_servicos (servico_id);
