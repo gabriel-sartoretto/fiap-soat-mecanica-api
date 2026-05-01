@@ -13,25 +13,25 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PecaRepositoryImpl implements PecaRepository {
 
-    private final PecaJpaRepository jpaRepository;
-    private final PecaMapper mapper;
+    private final PecaJpaRepository pecaJpaRepository;
+    private final PecaMapper pecaMapper;
 
     @Override
     public Peca salvar(Peca peca) {
-        PecaEntity pecaEntity = mapper.toEntity(peca);
-        jpaRepository.save(pecaEntity);
-        return mapper.toDomain(pecaEntity);
+        PecaEntity pecaEntity = pecaMapper.toEntity(peca);
+        pecaJpaRepository.save(pecaEntity);
+        return pecaMapper.toDomain(pecaEntity);
     }
 
     @Override
     public Optional<Peca> buscarPorId(UUID id) {
-        return jpaRepository.findById(id)
-                .map(mapper::toDomain);
+        return pecaJpaRepository.findById(id)
+                .map(pecaMapper::toDomain);
     }
 
     @Override
     public Optional<Peca> buscarPorNome(String nome) {
-        return jpaRepository.findByNome(nome)
-                .map(mapper::toDomain);
+        return pecaJpaRepository.findByNome(nome)
+                .map(pecaMapper::toDomain);
     }
 }

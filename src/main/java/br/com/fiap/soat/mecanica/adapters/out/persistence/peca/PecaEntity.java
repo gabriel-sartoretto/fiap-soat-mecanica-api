@@ -24,10 +24,10 @@ public class PecaEntity extends PrincipalEntity {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "nome", unique = true, nullable = false)
+    @Column(name = "nome", length = 255, unique = true, nullable = false)
     private String nome;
 
-    @Column(name = "marca", nullable = false)
+    @Column(name = "marca", length = 255, nullable = false)
     private String marca;
 
     @Column(name = "valor_unitario", precision = 10, scale = 2, nullable = false)

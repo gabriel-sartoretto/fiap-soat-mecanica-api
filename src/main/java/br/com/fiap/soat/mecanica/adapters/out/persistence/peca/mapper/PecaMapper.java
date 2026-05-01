@@ -19,9 +19,13 @@ public class PecaMapper {
     }
 
     public Peca toDomain(PecaEntity pecaEntity) {
-        Peca peca = new Peca(pecaEntity.getNome(), pecaEntity.getMarca(),
-                pecaEntity.getValorUnitario(), pecaEntity.getQuantidadeEstoque());
-        peca.setId(pecaEntity.getId());
-        return peca;
+        return Peca.reconstruir(
+                pecaEntity.getId(),
+                pecaEntity.getStatus(),
+                pecaEntity.getNome(),
+                pecaEntity.getMarca(),
+                pecaEntity.getValorUnitario(),
+                pecaEntity.getQuantidadeEstoque()
+        );
     }
 }

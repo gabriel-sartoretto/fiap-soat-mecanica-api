@@ -1,15 +1,17 @@
 package br.com.fiap.soat.mecanica.domain.peca;
 
 import br.com.fiap.soat.mecanica.domain.Principal;
+import br.com.fiap.soat.mecanica.domain.enums.StatusRecursoEnum;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Peca extends Principal {
 
     private UUID id;
@@ -30,12 +32,34 @@ public class Peca extends Principal {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
-    public void atualizar(String nome, String marca, BigDecimal valorUnitario, Integer quantidadeEstoque) {
+    public static Peca reconstruir(
+            UUID id,
+            StatusRecursoEnum status,
+            String nome,
+            String marca,
+            BigDecimal valorUnitario,
+            Integer quantidadeEstoque
+    ) {
+        Peca peca = new Peca();
+        peca.id = id;
+        peca.status = status;
+        peca.nome = nome;
+        peca.marca = marca;
+        peca.valorUnitario = valorUnitario;
+        peca.quantidadeEstoque = quantidadeEstoque;
+        return peca;
+    }
+
+    public void alterar(String nome, String marca, BigDecimal valorUnitario, Integer quantidadeEstoque) {
         validar(nome, marca, valorUnitario, quantidadeEstoque);
         this.nome = nome;
         this.marca = marca;
         this.valorUnitario = valorUnitario;
         this.quantidadeEstoque = quantidadeEstoque;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     private void validar(String nome, String marca, BigDecimal valorUnitario, Integer quantidadeEstoque) {

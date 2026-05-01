@@ -4,7 +4,7 @@ import br.com.fiap.soat.mecanica.adapters.in.web.peca.dto.PecaAtualizarRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.peca.dto.PecaIncluirRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.peca.dto.PecaResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.peca.mapper.PecaResponseMapper;
-import br.com.fiap.soat.mecanica.application.peca.usecase.AtualizarPecaUseCase;
+import br.com.fiap.soat.mecanica.application.peca.usecase.AlterarPecaUseCase;
 import br.com.fiap.soat.mecanica.application.peca.usecase.BuscarPecaPorIdUseCase;
 import br.com.fiap.soat.mecanica.application.peca.usecase.CadastrarPecaUseCase;
 import br.com.fiap.soat.mecanica.domain.peca.Peca;
@@ -29,30 +29,41 @@ import java.util.UUID;
 public class PecaController {
 
     private final CadastrarPecaUseCase cadastrarPecaUseCase;
-    private final AtualizarPecaUseCase atualizarPecaUseCase;
+    private final AlterarPecaUseCase alterarPecaUseCase;
     private final BuscarPecaPorIdUseCase buscarPecaPorIdUseCase;
 
     @PostMapping
     @Operation(summary = "Cadastrar uma peca")
     @PreAuthorize("hasRole('ALMOXARIFADO')")
     public ResponseEntity<PecaResponse> cadastrar(@Valid @RequestBody PecaIncluirRequest request) {
-        Peca peca = cadastrarPecaUseCase.executar(request);
+        Peca peca = cadastrarPecaUseCase.executar(
+                request.nome(),
+                request.marca(),
+                request.valorUnitario(),
+                request.quantidadeEstoque()
+        );
         return ResponseEntity.ok(PecaResponseMapper.toResponse(peca));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar uma peca")
     @PreAuthorize("hasRole('ALMOXARIFADO')")
-    public ResponseEntity<PecaResponse> atualizar(@PathVariable("id") UUID id,
-                                                  @Valid @RequestBody PecaAtualizarRequest request) {
-        Peca peca = atualizarPecaUseCase.executar(id, request);
+    public ResponseEntity<PecaResponse> alterar(@PathVariable UUID id,
+                                                @Valid @RequestBody PecaAtualizarRequest request) {
+        Peca peca = alterarPecaUseCase.executar(
+                id,
+                request.nome(),
+                request.marca(),
+                request.valorUnitario(),
+                request.quantidadeEstoque()
+        );
         return ResponseEntity.ok(PecaResponseMapper.toResponse(peca));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Buscar uma peca por ID")
     @PreAuthorize("hasRole('ALMOXARIFADO')")
-    public ResponseEntity<PecaResponse> buscarPorId(@PathVariable("id") UUID id) {
+    public ResponseEntity<PecaResponse> buscarPorId(@PathVariable UUID id) {
         Peca peca = buscarPecaPorIdUseCase.executar(id);
         return ResponseEntity.ok(PecaResponseMapper.toResponse(peca));
     }
