@@ -17,8 +17,5 @@ public record ClienteIncluirRequest(
         @Email(message = "o e-mail é inválido")
         String email,
 
-        String telefone,
-
-        @NotNull(message = "O usuário é obrigatório")
-        UUID usuarioId
+        String telefone
 ) {}

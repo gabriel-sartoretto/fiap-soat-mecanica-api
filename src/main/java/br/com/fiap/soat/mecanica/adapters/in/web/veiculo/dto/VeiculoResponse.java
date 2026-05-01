@@ -12,5 +12,6 @@ public record VeiculoResponse(
         String marca,
         String modelo,
         String ano,
-        Integer quantidadeEixos
+        Integer quantidadeEixos,
+        UUID clienteId
 ) {}

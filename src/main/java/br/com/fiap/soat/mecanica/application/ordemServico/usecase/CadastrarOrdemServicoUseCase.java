@@ -1,12 +1,11 @@
 package br.com.fiap.soat.mecanica.application.ordemServico.usecase;
 
+import br.com.fiap.soat.mecanica.adapters.in.web.security.CurrentUserProvider;
 import br.com.fiap.soat.mecanica.domain.enums.CargoEnum;
-import br.com.fiap.soat.mecanica.domain.exception.RecursoNaoEncontradoException;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServicoRepository;
 import br.com.fiap.soat.mecanica.domain.usuario.Usuario;
-import br.com.fiap.soat.mecanica.domain.usuario.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +16,17 @@ import java.util.UUID;
 public class CadastrarOrdemServicoUseCase {
 
     private final OrdemServicoRepository repository;
-    private final UsuarioRepository usuarioRepository;
+    private final CurrentUserProvider currentUser;
 
-    public OrdemServico executar(String observacao, UUID veiculoId, UUID usuarioId) {
+    public OrdemServico executar(String observacao, UUID veiculoId) {
 
-        Usuario usuario = usuarioRepository.buscarPorId(usuarioId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
+        Usuario usuario = currentUser.get();
 
         if (usuario.getCargoEnum() != CargoEnum.MECANICO) {
             throw new RegraNegocioException("Somente mecânicos podem criar OS");
         }
 
-        OrdemServico os = new OrdemServico(observacao, veiculoId, usuarioId);
+        OrdemServico os = new OrdemServico(observacao, veiculoId, usuario.getId());
         return repository.salvar(os);
     }
 }

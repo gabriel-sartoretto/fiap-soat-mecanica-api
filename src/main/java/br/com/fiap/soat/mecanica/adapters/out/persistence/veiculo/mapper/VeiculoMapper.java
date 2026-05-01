@@ -15,6 +15,7 @@ public class VeiculoMapper {
         veiculoEntity.setModelo(veiculo.getModelo());
         veiculoEntity.setAno(veiculo.getAno());
         veiculoEntity.setQuantidadeEixos(veiculo.getQuantidadeEixos());
+        veiculoEntity.setClienteId(veiculo.getClienteId());
         return veiculoEntity;
     }
 

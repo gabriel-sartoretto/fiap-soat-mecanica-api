@@ -11,8 +11,7 @@ public enum CargoEnum {
         this.descricao = descricao;
     }
 
-    @Override
-    public String toString() {
+    public String getDescricao() {
         return descricao;
     }
 }

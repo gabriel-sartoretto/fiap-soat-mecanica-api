@@ -38,11 +38,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         // qualquer outra rota precisa de autenticação
                         .anyRequest().authenticated()
                 )
-                // adiciona o filtro JWT antes do filtro padrão do Spring Security
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

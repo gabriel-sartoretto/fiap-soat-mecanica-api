@@ -9,9 +9,6 @@ public record OrdemServicoIncluirRequest(
         String observacao,
 
         @NotNull(message = "O veículo é obrigatório")
-        UUID veiculoId,
-
-        @NotNull(message = "O usuário dono é obrigatório")
-        UUID usuarioId
+        UUID veiculoId
 ) {
 }

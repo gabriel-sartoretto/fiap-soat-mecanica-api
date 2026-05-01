@@ -31,7 +31,7 @@ public class ClienteController {
     @Operation(summary = "Cadastrar um cliente")
     public ResponseEntity<ClienteResponse> cadastrar(@Valid @RequestBody ClienteIncluirRequest request) {
         Cliente cliente = cadastrarClienteUseCase.executar(request.nome(), request.cpf(), request.cnpj(),
-                request.email(), request.telefone(), request.usuarioId());
+                request.email(), request.telefone());
         return ResponseEntity.ok(ClienteResponseMapper.toResponse(cliente));
     }
 

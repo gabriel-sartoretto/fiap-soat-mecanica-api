@@ -4,6 +4,7 @@ import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoIn
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.OrdemServicoResponseMapper;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarOrdemServicoPorIdUseCase;
+import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarTodosOrdemServicoPorVeiculoIdUseCase;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.CadastrarOrdemServicoUseCase;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,13 +24,14 @@ public class OrdemServicoController {
 
     private final CadastrarOrdemServicoUseCase cadastrarOrdemServicoUseCase;
     private final BuscarOrdemServicoPorIdUseCase buscarOrdemServicoPorIdUseCase;
+    private final BuscarTodosOrdemServicoPorVeiculoIdUseCase buscarTodosOrdemServicoPorVeiculoIdUseCase;
 
     @PostMapping
     @PreAuthorize("hasRole('MECANICO')")
     @Operation(summary = "Cadastrar uma Ordem de Serviço")
     public ResponseEntity<OrdemServicoResponse> cadastrar(@Valid @RequestBody OrdemServicoIncluirRequest request) {
 
-        OrdemServico os = cadastrarOrdemServicoUseCase.executar(request.observacao(), request.veiculoId(), request.usuarioId());
+        OrdemServico os = cadastrarOrdemServicoUseCase.executar(request.observacao(), request.veiculoId());
 
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
     }
@@ -42,6 +45,19 @@ public class OrdemServicoController {
 
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
     }
-}
 
-// TODO FAZER O BUSCAR OS POR ID VEICULO PRO CLIENTE PODER VER A SITUACAO E TEM Q DIFERENCIAR OS PAGOS DOS NAO PAGOS, PQ O PAGOS JÁ ESTAO FINALIZADOS
+    @GetMapping("/veiculo/{veiculoId}")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Buscar Ordem de serviços por veículo ID")
+    public ResponseEntity<List<OrdemServicoResponse>> buscarTodosPorVeiculoId(
+            @PathVariable UUID veiculoId) {
+
+        List<OrdemServico> ordemServicos = buscarTodosOrdemServicoPorVeiculoIdUseCase.executar(veiculoId);
+
+        List<OrdemServicoResponse> response = ordemServicos.stream()
+                .map(OrdemServicoResponseMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+}

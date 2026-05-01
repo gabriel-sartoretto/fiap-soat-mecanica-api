@@ -6,6 +6,7 @@ import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +28,13 @@ public class OrdemServicoRepositoryImpl implements OrdemServicoRepository {
     public Optional<OrdemServico> buscarPorId(UUID id) {
         return ordemServicoJpaRepository.findById(id)
                 .map(ordemServicoMapper::toDomain);
+    }
+
+    @Override
+    public List<OrdemServico> buscarTodosPorVeiculoId(UUID veiculoId) {
+        return ordemServicoJpaRepository.findAllByVeiculoId(veiculoId)
+                .stream()
+                .map(ordemServicoMapper::toDomain)
+                .toList();
     }
 }

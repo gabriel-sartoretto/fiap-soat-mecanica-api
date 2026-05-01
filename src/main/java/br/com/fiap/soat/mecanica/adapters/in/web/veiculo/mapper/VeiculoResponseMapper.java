@@ -7,6 +7,6 @@ public class VeiculoResponseMapper {
 
     public static VeiculoResponse toResponse(Veiculo v) {
         return new VeiculoResponse(v.getId(), v.getStatus(), v.getPlaca().getValue(), v.getMarca(),
-                v.getModelo(), v.getAno(), v.getQuantidadeEixos());
+                v.getModelo(), v.getAno(), v.getQuantidadeEixos(), v.getClienteId());
     }
 }
