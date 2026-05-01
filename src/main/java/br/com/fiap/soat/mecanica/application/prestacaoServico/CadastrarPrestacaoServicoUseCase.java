@@ -1,7 +1,13 @@
 package br.com.fiap.soat.mecanica.application.prestacaoServico;
 
+import br.com.fiap.soat.mecanica.domain.exception.RecursoNaoEncontradoException;
+import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
+import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
+import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServicoRepository;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServico;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServicoRepository;
+import br.com.fiap.soat.mecanica.domain.servico.Servico;
+import br.com.fiap.soat.mecanica.domain.servico.ServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +19,24 @@ import java.util.UUID;
 public class CadastrarPrestacaoServicoUseCase {
 
     private final PrestacaoServicoRepository prestacaoServicoRepository;
+    private final ServicoRepository servicoRepository;
+    private final OrdemServicoRepository ordemServicoRepository;
 
     public PrestacaoServico executar(Integer quantidadeNecessaria, BigDecimal precoMaoDeObra, UUID ordemServicoId, UUID servicoId) {
+
+        Servico servico = servicoRepository.buscarPorId(servicoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço não encontrado"));
+
+        OrdemServico ordemServico = ordemServicoRepository.buscarPorId(ordemServicoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Ordem Serviço não encontrado"));
+
+        if (servico.isInativo() || ordemServico.isInativo()) {
+            throw new RegraNegocioException("Serviço ou Ordem de Serviço está inativo");
+        }
+
+        if (prestacaoServicoRepository.existsByOrdemServicoIdAndServicoId(ordemServicoId, servicoId)) {
+            throw new RegraNegocioException("Serviço já adicionado na OS");
+        }
 
         PrestacaoServico prestacaoServico = new PrestacaoServico(quantidadeNecessaria, precoMaoDeObra, ordemServicoId, servicoId);
         return prestacaoServicoRepository.salvar(prestacaoServico);

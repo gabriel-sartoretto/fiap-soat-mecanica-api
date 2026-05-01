@@ -2,10 +2,12 @@ package br.com.fiap.soat.mecanica.adapters.in.web.ordemServico;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoIncluirRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoResponse;
+import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioOSResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.OrdemServicoResponseMapper;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarOrdemServicoPorIdUseCase;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarTodosOrdemServicoPorVeiculoIdUseCase;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.CadastrarOrdemServicoUseCase;
+import br.com.fiap.soat.mecanica.application.ordemServico.usecase.ConsultarTempoMedioOSUseCase;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -25,6 +27,7 @@ public class OrdemServicoController {
     private final CadastrarOrdemServicoUseCase cadastrarOrdemServicoUseCase;
     private final BuscarOrdemServicoPorIdUseCase buscarOrdemServicoPorIdUseCase;
     private final BuscarTodosOrdemServicoPorVeiculoIdUseCase buscarTodosOrdemServicoPorVeiculoIdUseCase;
+    private final ConsultarTempoMedioOSUseCase consultarTempoMedioOSUseCase;
 
     @PostMapping
     @PreAuthorize("hasRole('MECANICO')")
@@ -57,6 +60,16 @@ public class OrdemServicoController {
         List<OrdemServicoResponse> response = ordemServicos.stream()
                 .map(OrdemServicoResponseMapper::toResponse)
                 .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/tempo-medio")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Buscar tempo médio dos serviços da Ordem de serviços por ID")
+    public ResponseEntity<TempoMedioOSResponse> buscarTempoMedioDosServicos(@PathVariable UUID id) {
+
+        TempoMedioOSResponse response = consultarTempoMedioOSUseCase.executar(id);
 
         return ResponseEntity.ok(response);
     }

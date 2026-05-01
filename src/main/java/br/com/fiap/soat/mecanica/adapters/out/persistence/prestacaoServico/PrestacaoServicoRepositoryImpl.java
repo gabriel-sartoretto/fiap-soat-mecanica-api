@@ -1,14 +1,13 @@
 package br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico;
 
 import br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico.mapper.PrestacaoServicoMapper;
+import br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico.projection.TempoMedioServicoProjection;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServico;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,5 +35,15 @@ public class PrestacaoServicoRepositoryImpl implements PrestacaoServicoRepositor
                 .stream()
                 .map(prestacaoServicoMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public boolean existsByOrdemServicoIdAndServicoId(UUID ordemServicoId, UUID servicoId) {
+        return prestacaoServicoJpaRepository.existsByOrdemServicoIdAndServicoId(ordemServicoId, servicoId);
+    }
+
+    @Override
+    public List<TempoMedioServicoProjection> calcularTempoMedioPorServicos(Set<UUID> servicoIds) {
+        return prestacaoServicoJpaRepository.calcularTempoMedioPorServicos(servicoIds);
     }
 }

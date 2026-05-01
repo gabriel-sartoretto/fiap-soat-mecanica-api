@@ -29,10 +29,10 @@ public class ClienteEntity extends PrincipalEntity {
     @Column(name = "nome", nullable = false, length = 255)
     private String nome;
 
-    @Column(name = "cpf", length = 11)
+    @Column(name = "cpf", length = 11, unique = true)
     private String cpf;
 
-    @Column(name = "cnpj", length = 14)
+    @Column(name = "cnpj", length = 14, unique = true)
     private String cnpj;
 
     @Column(name = "email", nullable = false, length = 255)

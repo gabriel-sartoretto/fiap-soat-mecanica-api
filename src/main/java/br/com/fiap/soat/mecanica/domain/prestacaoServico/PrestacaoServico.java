@@ -36,7 +36,6 @@ public class PrestacaoServico extends Principal {
         this.ordemServicoId = ordemServicoId;
         this.servicoId = servicoId;
         this.subtotal = calcularSubtotal();
-        this.dataInicio = LocalDateTime.now();
     }
 
     public static PrestacaoServico reconstruir(
@@ -62,6 +61,19 @@ public class PrestacaoServico extends Principal {
         prestacaoServico.servicoId = servicoId;
 
         return prestacaoServico;
+    }
+
+    // todo quando a os mudar para em andamento ele chama aqui
+    public void iniciarServico() {
+        if (this.isInativo()) {
+            throw new RegraNegocioException("Não é possível iniciar um serviço inativo");
+        }
+
+        if (this.dataInicio != null) {
+            throw new RegraNegocioException("Serviço já iniciado");
+        }
+
+        this.dataInicio = LocalDateTime.now();
     }
 
     public void finalizarServico() {

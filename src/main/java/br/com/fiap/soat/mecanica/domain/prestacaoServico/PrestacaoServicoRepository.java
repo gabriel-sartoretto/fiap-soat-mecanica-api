@@ -1,8 +1,8 @@
 package br.com.fiap.soat.mecanica.domain.prestacaoServico;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico.projection.TempoMedioServicoProjection;
+
+import java.util.*;
 
 public interface PrestacaoServicoRepository {
 
@@ -11,4 +11,8 @@ public interface PrestacaoServicoRepository {
     Optional<PrestacaoServico> buscarPorId(UUID id);
 
     List<PrestacaoServico> buscarTodosPorOrdemServicoId(UUID ordemServicoId);
+
+    boolean existsByOrdemServicoIdAndServicoId(UUID ordemServicoId, UUID servicoId);
+
+    List<TempoMedioServicoProjection> calcularTempoMedioPorServicos(Set<UUID> servicoIds);
 }

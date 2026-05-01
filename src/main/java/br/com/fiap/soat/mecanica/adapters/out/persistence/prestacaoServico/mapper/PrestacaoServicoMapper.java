@@ -7,31 +7,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class PrestacaoServicoMapper {
 
-    public PrestacaoServicoEntity toEntity(PrestacaoServico ps) {
-        PrestacaoServicoEntity entity = new PrestacaoServicoEntity();
-        entity.setId(ps.getId());
-        entity.setStatus(ps.getStatus());
-        entity.setQuantidadeNecessaria(ps.getQuantidadeNecessaria());
-        entity.setPrecoMaoDeObra(ps.getPrecoMaoDeObra());
-        entity.setSubtotal(ps.getSubtotal());
-        entity.setDataInicio(ps.getDataInicio());
-        entity.setDataFim(ps.getDataFim());
-        entity.setOrdemServicoId(ps.getOrdemServicoId());
-        entity.setServicoId(ps.getServicoId());
-        return entity;
+    public PrestacaoServicoEntity toEntity(PrestacaoServico prestacaoServico) {
+        PrestacaoServicoEntity prestacaoServicoEntity = new PrestacaoServicoEntity();
+        prestacaoServicoEntity.setQuantidadeNecessaria(prestacaoServico.getQuantidadeNecessaria());
+        prestacaoServicoEntity.setPrecoMaoDeObra(prestacaoServico.getPrecoMaoDeObra());
+        prestacaoServicoEntity.setSubtotal(prestacaoServico.getSubtotal());
+        prestacaoServicoEntity.setDataInicio(prestacaoServico.getDataInicio());
+        prestacaoServicoEntity.setDataFim(prestacaoServico.getDataFim());
+        prestacaoServicoEntity.setOrdemServicoId(prestacaoServico.getOrdemServicoId());
+        prestacaoServicoEntity.setServicoId(prestacaoServico.getServicoId());
+        return prestacaoServicoEntity;
     }
 
-    public PrestacaoServico toDomain(PrestacaoServicoEntity entity) {
+    public PrestacaoServico toDomain(PrestacaoServicoEntity prestacaoServicoEntity) {
         return PrestacaoServico.reconstruir(
-                entity.getId(),
-                entity.getStatus(),
-                entity.getQuantidadeNecessaria(),
-                entity.getPrecoMaoDeObra(),
-                entity.getSubtotal(),
-                entity.getDataInicio(),
-                entity.getDataFim(),
-                entity.getOrdemServicoId(),
-                entity.getServicoId()
+                prestacaoServicoEntity.getId(),
+                prestacaoServicoEntity.getStatus(),
+                prestacaoServicoEntity.getQuantidadeNecessaria(),
+                prestacaoServicoEntity.getPrecoMaoDeObra(),
+                prestacaoServicoEntity.getSubtotal(),
+                prestacaoServicoEntity.getDataInicio(),
+                prestacaoServicoEntity.getDataFim(),
+                prestacaoServicoEntity.getOrdemServicoId(),
+                prestacaoServicoEntity.getServicoId()
         );
     }
 }

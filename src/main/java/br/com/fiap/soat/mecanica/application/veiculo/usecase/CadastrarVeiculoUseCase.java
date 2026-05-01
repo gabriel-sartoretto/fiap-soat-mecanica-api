@@ -13,15 +13,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CadastrarVeiculoUseCase {
 
-    private final VeiculoRepository repository;
+    private final VeiculoRepository veiculoRepository;
 
     public Veiculo executar(String placa, String marca, String modelo, String ano, Integer quantidadeEixos, UUID clienteId) {
-        repository.buscarPorPlaca(placa)
+
+        veiculoRepository.buscarPorPlaca(placa)
                 .ifPresent(veiculo -> {
                     throw new RegraNegocioException("Placa já cadastrada");
                 });
+
         Veiculo veiculo = new Veiculo(new Placa(placa), marca, modelo,
                 ano, quantidadeEixos, clienteId);
-        return repository.salvar(veiculo);
+        return veiculoRepository.salvar(veiculo);
     }
 }
