@@ -7,9 +7,6 @@ import java.util.UUID;
 
 public record PrestacaoServicoIncluirRequest(
 
-        @NotNull(message = "A quantidade necessária é obrigatório ")
-        Integer quantidadeNecessaria,
-
         @NotNull(message = "O preço da mão de obra é obrigatório")
         BigDecimal precoMaoDeObra,
 

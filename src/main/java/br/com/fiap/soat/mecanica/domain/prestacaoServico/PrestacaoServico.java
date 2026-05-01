@@ -16,7 +16,6 @@ import java.util.UUID;
 public class PrestacaoServico extends Principal {
 
     private UUID id;
-    private Integer quantidadeNecessaria;
     private BigDecimal precoMaoDeObra;
     private BigDecimal subtotal;
     private LocalDateTime dataInicio;
@@ -24,14 +23,12 @@ public class PrestacaoServico extends Principal {
     private UUID ordemServicoId;
     private UUID servicoId;
 
-    public PrestacaoServico(Integer quantidadeNecessaria,
-                            BigDecimal precoMaoDeObra,
+    public PrestacaoServico(BigDecimal precoMaoDeObra,
                             UUID ordemServicoId,
                             UUID servicoId) {
 
-        validar(quantidadeNecessaria, precoMaoDeObra, ordemServicoId, servicoId);
+        validar(precoMaoDeObra, ordemServicoId, servicoId);
 
-        this.quantidadeNecessaria = quantidadeNecessaria;
         this.precoMaoDeObra = precoMaoDeObra;
         this.ordemServicoId = ordemServicoId;
         this.servicoId = servicoId;
@@ -41,7 +38,6 @@ public class PrestacaoServico extends Principal {
     public static PrestacaoServico reconstruir(
             UUID id,
             StatusRecursoEnum status,
-            Integer quantidadeNecessaria,
             BigDecimal precoMaoDeObra,
             BigDecimal subtotal,
             LocalDateTime dataInicio,
@@ -52,7 +48,6 @@ public class PrestacaoServico extends Principal {
         PrestacaoServico prestacaoServico = new PrestacaoServico();
         prestacaoServico.id = id;
         prestacaoServico.status = status;
-        prestacaoServico.quantidadeNecessaria = quantidadeNecessaria;
         prestacaoServico.precoMaoDeObra = precoMaoDeObra;
         prestacaoServico.subtotal = subtotal;
         prestacaoServico.dataInicio = dataInicio;
@@ -90,17 +85,13 @@ public class PrestacaoServico extends Principal {
     }
 
     private BigDecimal calcularSubtotal() {
-        // TODO tem q multiplicar a quantidade necessária pelo preço unitario das peças e somar com a mdo
+        // TODO tem q pegar o subtotal de todas as alocacoes de peças, somar e somar com a mdo
         return precoMaoDeObra;
     }
 
-    private void validar(Integer quantidadeNecessaria,
-                         BigDecimal precoMaoDeObra,
+    private void validar(BigDecimal precoMaoDeObra,
                          UUID ordemServicoId,
                          UUID servicoId) {
-
-        if (quantidadeNecessaria == null || quantidadeNecessaria <= 0)
-            throw new RegraNegocioException("Quantidade necessária é obrigatória");
 
         if (precoMaoDeObra == null || precoMaoDeObra.compareTo(BigDecimal.ZERO) <= 0)
             throw new RegraNegocioException("Preço de mão de obra é obrigatório");

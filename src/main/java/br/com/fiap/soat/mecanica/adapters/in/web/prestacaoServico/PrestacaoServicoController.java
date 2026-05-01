@@ -32,7 +32,6 @@ public class PrestacaoServicoController {
     public ResponseEntity<PrestacaoServicoResponse> cadastrar(@Valid @RequestBody PrestacaoServicoIncluirRequest request) {
 
         PrestacaoServico ps = cadastrarUseCase.executar(
-                request.quantidadeNecessaria(),
                 request.precoMaoDeObra(),
                 request.ordemServicoId(),
                 request.servicoId()

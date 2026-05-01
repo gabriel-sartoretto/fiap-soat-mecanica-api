@@ -9,7 +9,6 @@ import java.util.UUID;
 public record PrestacaoServicoResponse(
         UUID id,
         StatusRecursoEnum status,
-        Integer quantidadeEstoque,
         BigDecimal precoMaoDeObra,
         BigDecimal subtotal,
         LocalDateTime dataInicio,

@@ -27,9 +27,6 @@ public class PrestacaoServicoEntity extends PrincipalEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "quantidade_necessaria", nullable = false)
-    private Integer quantidadeNecessaria;
-
     @Column(name = "preco_mdo", nullable = false)
     private BigDecimal precoMaoDeObra;
 

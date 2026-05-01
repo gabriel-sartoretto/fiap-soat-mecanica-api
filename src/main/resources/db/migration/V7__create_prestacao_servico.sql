@@ -2,7 +2,6 @@ CREATE TABLE prestacao_servicos
 (
     id                    UUID PRIMARY KEY,
     status                VARCHAR(20)    NOT NULL CHECK (status IN ('ATIVO', 'INATIVO')),
-    quantidade_necessaria INTEGER        NOT NULL,
     preco_mdo             NUMERIC(10, 2) NOT NULL,
     subtotal              NUMERIC(10, 2) NOT NULL,
     data_inicio           TIMESTAMP      NOT NULL,

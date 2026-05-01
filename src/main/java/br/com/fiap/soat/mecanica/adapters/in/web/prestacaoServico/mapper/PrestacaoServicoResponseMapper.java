@@ -11,7 +11,6 @@ public class PrestacaoServicoResponseMapper {
         return new PrestacaoServicoResponse(
                 ps.getId(),
                 ps.getStatus(),
-                ps.getQuantidadeNecessaria(),
                 ps.getPrecoMaoDeObra(),
                 ps.getSubtotal(),
                 ps.getDataInicio(),

@@ -22,7 +22,7 @@ public class CadastrarPrestacaoServicoUseCase {
     private final ServicoRepository servicoRepository;
     private final OrdemServicoRepository ordemServicoRepository;
 
-    public PrestacaoServico executar(Integer quantidadeNecessaria, BigDecimal precoMaoDeObra, UUID ordemServicoId, UUID servicoId) {
+    public PrestacaoServico executar(BigDecimal precoMaoDeObra, UUID ordemServicoId, UUID servicoId) {
 
         Servico servico = servicoRepository.buscarPorId(servicoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço não encontrado"));
@@ -38,7 +38,7 @@ public class CadastrarPrestacaoServicoUseCase {
             throw new RegraNegocioException("Serviço já adicionado na OS");
         }
 
-        PrestacaoServico prestacaoServico = new PrestacaoServico(quantidadeNecessaria, precoMaoDeObra, ordemServicoId, servicoId);
+        PrestacaoServico prestacaoServico = new PrestacaoServico(precoMaoDeObra, ordemServicoId, servicoId);
         return prestacaoServicoRepository.salvar(prestacaoServico);
     }
 }

@@ -9,7 +9,6 @@ public class PrestacaoServicoMapper {
 
     public PrestacaoServicoEntity toEntity(PrestacaoServico prestacaoServico) {
         PrestacaoServicoEntity prestacaoServicoEntity = new PrestacaoServicoEntity();
-        prestacaoServicoEntity.setQuantidadeNecessaria(prestacaoServico.getQuantidadeNecessaria());
         prestacaoServicoEntity.setPrecoMaoDeObra(prestacaoServico.getPrecoMaoDeObra());
         prestacaoServicoEntity.setSubtotal(prestacaoServico.getSubtotal());
         prestacaoServicoEntity.setDataInicio(prestacaoServico.getDataInicio());
@@ -23,7 +22,6 @@ public class PrestacaoServicoMapper {
         return PrestacaoServico.reconstruir(
                 prestacaoServicoEntity.getId(),
                 prestacaoServicoEntity.getStatus(),
-                prestacaoServicoEntity.getQuantidadeNecessaria(),
                 prestacaoServicoEntity.getPrecoMaoDeObra(),
                 prestacaoServicoEntity.getSubtotal(),
                 prestacaoServicoEntity.getDataInicio(),
