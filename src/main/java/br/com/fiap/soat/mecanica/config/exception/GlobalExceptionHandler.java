@@ -141,7 +141,7 @@ public class GlobalExceptionHandler {
                 new ErrorResponse(
                         400,
                         "Bad Request",
-                        "Violação de integridade de dados (ex: duplicidade ou FK inválida)",
+                        "Violação de integridade de dados (ex: duplicidade ou FK inválida): " + ex.getCause().getMessage(),
                         null,
                         null,
                         null

@@ -5,6 +5,7 @@ import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
 import br.com.fiap.soat.mecanica.domain.usuario.Usuario;
 import br.com.fiap.soat.mecanica.domain.usuario.UsuarioRepository;
 import br.com.fiap.soat.mecanica.domain.valueobject.Email;
+import br.com.fiap.soat.mecanica.domain.valueobject.Senha;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,15 @@ public class CadastrarUsuarioUseCase {
     private final PasswordEncoderPort passwordEncoderPort;
 
     public Usuario executar(String senha, String nome, String email, CargoEnum cargoEnum) {
-        repository.buscarPorEmail(email)
+
+        Email emailFormatado = new Email(email);
+        repository.buscarPorEmail(emailFormatado.getValue())
                 .ifPresent(usuario -> {
-                    throw new RegraNegocioException("Placa já cadastrada");
+                    throw new RegraNegocioException("Usuário já cadastrada");
                 });
-        String senhaHash = passwordEncoderPort.encode(senha);
+
+        Senha senhaValidada = new Senha(senha);
+        String senhaHash = passwordEncoderPort.encode(senhaValidada.getValor());
         Usuario usuario = new Usuario(nome, senhaHash, new Email(email), cargoEnum);
         return repository.salvar(usuario);
     }
