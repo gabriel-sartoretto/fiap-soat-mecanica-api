@@ -282,7 +282,7 @@ Observacoes:
 ### Enums
 
 - `StatusRecursoEnum`: `ATIVO`, `INATIVO`.
-- `CargoEnum`: `ATENDENTE`, `MECANICO`, `ALMOXARIFADO`.
+- `CargoEnum`: `ATENDENTE`, `MECANICO`, `ALMOXARIFE`.
 
 Nao ha enum para status de Ordem de Servico exigido pelo desafio.
 

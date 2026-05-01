@@ -33,8 +33,8 @@ public class PecaController {
     private final BuscarPecaPorIdUseCase buscarPecaPorIdUseCase;
 
     @PostMapping
-    @Operation(summary = "Cadastrar uma peca")
-    @PreAuthorize("hasRole('ALMOXARIFADO')")
+    @Operation(summary = "Cadastrar uma peça")
+    @PreAuthorize("hasRole('ALMOXARIFE')")
     public ResponseEntity<PecaResponse> cadastrar(@Valid @RequestBody PecaIncluirRequest request) {
         Peca peca = cadastrarPecaUseCase.executar(
                 request.nome(),
@@ -46,8 +46,8 @@ public class PecaController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar uma peca")
-    @PreAuthorize("hasRole('ALMOXARIFADO')")
+    @Operation(summary = "Atualizar uma peça")
+    @PreAuthorize("hasRole('ALMOXARIFE')")
     public ResponseEntity<PecaResponse> alterar(@PathVariable UUID id,
                                                 @Valid @RequestBody PecaAtualizarRequest request) {
         Peca peca = alterarPecaUseCase.executar(
@@ -61,8 +61,8 @@ public class PecaController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar uma peca por ID")
-    @PreAuthorize("hasRole('ALMOXARIFADO')")
+    @Operation(summary = "Buscar uma peça por ID")
+    @PreAuthorize("hasRole('ALMOXARIFE')")
     public ResponseEntity<PecaResponse> buscarPorId(@PathVariable UUID id) {
         Peca peca = buscarPecaPorIdUseCase.executar(id);
         return ResponseEntity.ok(PecaResponseMapper.toResponse(peca));

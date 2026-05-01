@@ -58,10 +58,6 @@ public class Peca extends Principal {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     private void validar(String nome, String marca, BigDecimal valorUnitario, Integer quantidadeEstoque) {
         if (nome == null || nome.isBlank()) {
             throw new RegraNegocioException("Nome obrigatorio");
