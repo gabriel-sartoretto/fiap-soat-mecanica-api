@@ -11,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "clientes",
+        schema = "public",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "cpf"),
                 @UniqueConstraint(columnNames = "cnpj"),

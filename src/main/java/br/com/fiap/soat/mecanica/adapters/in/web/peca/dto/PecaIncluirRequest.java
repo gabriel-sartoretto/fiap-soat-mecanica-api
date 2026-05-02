@@ -8,17 +8,17 @@ import java.math.BigDecimal;
 
 public record PecaIncluirRequest(
 
-        @NotBlank(message = "O nome nao pode ser nulo ou vazio")
+        @NotBlank(message = "O nome não pode ser nulo ou vazio")
         String nome,
 
-        @NotBlank(message = "A marca nao pode ser nula ou vazia")
+        @NotBlank(message = "A marca não pode ser nula ou vazia")
         String marca,
 
-        @NotNull(message = "O valor unitario nao pode ser nulo")
-        @PositiveOrZero(message = "O valor unitario nao pode ser negativo")
+        @NotNull(message = "O valor unitario não pode ser nulo")
+        @PositiveOrZero(message = "O valor unitario não pode ser negativo")
         BigDecimal valorUnitario,
 
-        @NotNull(message = "A quantidade em estoque nao pode ser nula")
-        @PositiveOrZero(message = "A quantidade em estoque nao pode ser negativa")
+        @NotNull(message = "A quantidade em estoque não pode ser nula")
+        @PositiveOrZero(message = "A quantidade em estoque não pode ser negativa")
         Integer quantidadeEstoque
 ) {}

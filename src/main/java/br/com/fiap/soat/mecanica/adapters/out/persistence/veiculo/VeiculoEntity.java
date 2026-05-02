@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(
         name = "veiculos",
+        schema = "public",
         indexes = {
                 @Index(name = "idx_veiculo_cliente_id", columnList = "cliente_id"),
         })

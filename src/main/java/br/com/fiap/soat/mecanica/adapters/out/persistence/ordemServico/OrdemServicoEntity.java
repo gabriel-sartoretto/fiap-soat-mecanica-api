@@ -14,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "ordem_servicos",
+        schema = "public",
         indexes = {
                 @Index(name = "idx_ordem_servico_veiculo_id", columnList = "veiculo_id"),
                 @Index(name = "idx_ordem_servico_usuario_id", columnList = "usuario_id")
