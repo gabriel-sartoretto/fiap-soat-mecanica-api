@@ -21,22 +21,29 @@ public class CadastrarClienteUseCase {
 
     public Cliente executar(String nome, String cpf, String cnpj, String email, String telefone) {
 
-        clienteRepository.buscarPorCpf(new CPF(cpf))
-                .ifPresent(cliente -> {
-                    throw new RegraNegocioException("CPF já existente");
-                });
+        CPF cpfFormatado = cpf == null ? null : new CPF(cpf);
+        CNPJ cnpjFormatado = cnpj == null ? null : new CNPJ(cnpj);
 
-        clienteRepository.buscarPorCnpj(new CNPJ(cnpj))
-                .ifPresent(cliente -> {
-                    throw new RegraNegocioException("CNPJ já existente");
-                });
+        if (cpfFormatado != null) {
+            clienteRepository.buscarPorCpf(cpfFormatado)
+                    .ifPresent(cliente -> {
+                        throw new RegraNegocioException("CPF já existente");
+                    });
+        }
+
+        if (cnpjFormatado != null) {
+            clienteRepository.buscarPorCnpj(cnpjFormatado)
+                    .ifPresent(cliente -> {
+                        throw new RegraNegocioException("CNPJ já existente");
+                    });
+        }
 
         Usuario usuario = currentUser.get();
 
         Cliente cliente = new Cliente(
                 nome,
-                cpf == null ? null : new CPF(cpf),
-                cnpj == null ? null : new CNPJ(cnpj),
+                cpfFormatado,
+                cnpjFormatado,
                 new Email(email),
                 telefone == null ? null : new Telefone(telefone),
                 usuario.getId()

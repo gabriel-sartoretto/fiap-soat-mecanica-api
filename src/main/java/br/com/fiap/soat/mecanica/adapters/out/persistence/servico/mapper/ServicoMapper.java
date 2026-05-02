@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 public class ServicoMapper {
     public ServicoEntity toEntity(Servico servico) {
         ServicoEntity servicoEntity = new ServicoEntity();
+        servicoEntity.setId(servico.getId());
+        servicoEntity.setStatus(servico.getStatus());
         servicoEntity.setNome(servico.getNome());
         servicoEntity.setDescricao(servico.getDescricao());
         return servicoEntity;

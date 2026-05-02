@@ -13,6 +13,8 @@ public class ClienteMapper {
 
     public ClienteEntity toEntity(Cliente cliente) {
         ClienteEntity clienteEntity = new ClienteEntity();
+        clienteEntity.setId(cliente.getId());
+        clienteEntity.setStatus(cliente.getStatus());
         clienteEntity.setNome(cliente.getNome());
         clienteEntity.setCpf(cliente.getCpf() == null ? null : cliente.getCpf().getValue());
         clienteEntity.setCnpj(cliente.getCnpj() == null ? null : cliente.getCnpj().getValue());

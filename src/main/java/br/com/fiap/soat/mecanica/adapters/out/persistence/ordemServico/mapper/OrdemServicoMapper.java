@@ -9,6 +9,8 @@ public class OrdemServicoMapper {
 
     public OrdemServicoEntity toEntity(OrdemServico ordemServico) {
         OrdemServicoEntity ordemServicoEntity = new OrdemServicoEntity();
+        ordemServicoEntity.setId(ordemServico.getId());
+        ordemServicoEntity.setStatus(ordemServico.getStatus());
         ordemServicoEntity.setSituacao(ordemServico.getSituacao());
         ordemServicoEntity.setDataRecebida(ordemServico.getDataRecebida());
         ordemServicoEntity.setDataDiagnostico(ordemServico.getDataDiagnostico());

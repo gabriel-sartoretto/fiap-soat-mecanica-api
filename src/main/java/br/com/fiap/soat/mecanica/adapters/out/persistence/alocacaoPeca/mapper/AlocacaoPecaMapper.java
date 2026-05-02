@@ -9,6 +9,8 @@ public class AlocacaoPecaMapper {
 
     public AlocacaoPecaEntity toEntity(AlocacaoPeca alocacaoPeca) {
         AlocacaoPecaEntity alocacaoPecaEntity = new AlocacaoPecaEntity();
+        alocacaoPecaEntity.setId(alocacaoPeca.getId());
+        alocacaoPecaEntity.setStatus(alocacaoPeca.getStatus());
         alocacaoPecaEntity.setQuantidadeNecessaria(alocacaoPeca.getQuantidadeNecessaria());
         alocacaoPecaEntity.setPrestacaoServicoId(alocacaoPeca.getPrestacaoServicoId());
         alocacaoPecaEntity.setPecaId(alocacaoPeca.getPecaId());

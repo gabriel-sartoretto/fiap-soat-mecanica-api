@@ -9,6 +9,8 @@ public class PrestacaoServicoMapper {
 
     public PrestacaoServicoEntity toEntity(PrestacaoServico prestacaoServico) {
         PrestacaoServicoEntity prestacaoServicoEntity = new PrestacaoServicoEntity();
+        prestacaoServicoEntity.setId(prestacaoServico.getId());
+        prestacaoServicoEntity.setStatus(prestacaoServico.getStatus());
         prestacaoServicoEntity.setPrecoMaoDeObra(prestacaoServico.getPrecoMaoDeObra());
         prestacaoServicoEntity.setSubtotal(prestacaoServico.getSubtotal());
         prestacaoServicoEntity.setDataInicio(prestacaoServico.getDataInicio());

@@ -32,6 +32,7 @@ public class PrestacaoServico extends Principal {
         this.precoMaoDeObra = precoMaoDeObra;
         this.ordemServicoId = ordemServicoId;
         this.servicoId = servicoId;
+        this.dataInicio = LocalDateTime.now();
         this.subtotal = calcularSubtotal();
     }
 
