@@ -31,6 +31,7 @@ public class ServicoRepositoryImpl implements ServicoRepository {
 
     @Override
     public Optional<Servico> buscarPorNome(String nome) {
-        return jpaRepository.findByNome(nome);
+        return jpaRepository.findByNome(nome)
+                .map(mapper::toDomain);
     }
 }
