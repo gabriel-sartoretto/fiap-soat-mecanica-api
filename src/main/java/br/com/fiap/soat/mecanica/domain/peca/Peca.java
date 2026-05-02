@@ -72,4 +72,28 @@ public class Peca extends Principal {
             throw new RegraNegocioException("Quantidade em estoque deve ser maior ou igual a zero");
         }
     }
+
+    public void baixarEstoque(Integer quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new RegraNegocioException("Quantidade para baixa deve ser maior que zero");
+        }
+
+        if (this.quantidadeEstoque < quantidade) {
+            throw new RegraNegocioException(String.format(
+                    "Sem estoque para a peça %s, o estoque contém apenas %s",
+                    this.nome,
+                    this.quantidadeEstoque
+            ));
+        }
+
+        this.quantidadeEstoque -= quantidade;
+    }
+
+    public void reporEstoque(Integer quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new RegraNegocioException("Quantidade para reposição deve ser maior que zero");
+        }
+
+        this.quantidadeEstoque += quantidade;
+    }
 }

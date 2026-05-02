@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.domain.enums;
 
-public enum SituacaoOrdemServico {
+public enum SituacaoOrdemServicoEnum {
     RECEBIDA("Recebida"),
     EM_DIAGNOSTICO("Em diagnóstico"),
     AGUARDANDO_APROVACAO("Aguardando aprovação"),
@@ -10,7 +10,7 @@ public enum SituacaoOrdemServico {
 
     private final String descricao;
 
-    SituacaoOrdemServico(String descricao) {
+    SituacaoOrdemServicoEnum(String descricao) {
         this.descricao = descricao;
     }
 

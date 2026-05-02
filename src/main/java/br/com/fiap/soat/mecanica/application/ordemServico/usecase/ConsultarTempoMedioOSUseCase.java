@@ -1,6 +1,5 @@
 package br.com.fiap.soat.mecanica.application.ordemServico.usecase;
 
-import br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico.projection.TempoMedioServicoProjection;
 import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
 import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioServicoResult;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServico;
@@ -9,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,44 +28,18 @@ public class ConsultarTempoMedioOSUseCase {
                 .map(PrestacaoServico::getServicoId)
                 .collect(Collectors.toSet());
 
-        List<TempoMedioServicoProjection> projections =
+        List<TempoMedioServicoResult> itens =
                 prestacaoRepository.calcularTempoMedioPorServicos(servicoIds);
 
-        List<TempoMedioServicoResult> itens = new ArrayList<>();
-
-        long totalSegundos = 0;
-
-        for (TempoMedioServicoProjection p : projections) {
-
-            Double segundos = p.getTempoMedioSegundos();
-
-            if (segundos != null) {
-                totalSegundos += segundos.longValue();
-            }
-
-            itens.add(new TempoMedioServicoResult(
-                    p.getNomeServico(),
-                    formatarTempo(segundos)
-            ));
-        }
+        double totalSegundos = itens.stream()
+                .map(TempoMedioServicoResult::tempoMedioSegundos)
+                .filter(Objects::nonNull)
+                .mapToDouble(Double::doubleValue)
+                .sum();
 
         return new TempoMedioOSResult(
                 itens,
-                formatarTempo((double) totalSegundos)
+                totalSegundos
         );
-    }
-
-    private String formatarTempo(Double segundos) {
-        if (segundos == null) return "Sem histórico";
-
-        Duration d = Duration.ofSeconds(segundos.longValue());
-
-        long horas = d.toHours();
-        long minutos = d.toMinutesPart();
-
-        if (horas > 0) {
-            return horas + "h " + minutos + "min";
-        }
-        return minutos + " min";
     }
 }

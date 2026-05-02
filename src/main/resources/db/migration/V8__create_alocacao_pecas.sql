@@ -12,11 +12,12 @@ CREATE TABLE alocacao_pecas
 
     CONSTRAINT fk_alocacao_peca
         FOREIGN KEY (peca_id)
-            REFERENCES pecas (id),
-
-    CONSTRAINT uk_alocacao_prestacao_peca
-        UNIQUE (prestacao_servico_id, peca_id)
+            REFERENCES pecas (id)
 );
+
+CREATE UNIQUE INDEX uk_alocacao_prestacao_peca_ativa
+    ON alocacao_pecas (prestacao_servico_id, peca_id)
+    WHERE status = 'ATIVO';
 
 CREATE INDEX idx_alocacao_prestacao
     ON alocacao_pecas (prestacao_servico_id);

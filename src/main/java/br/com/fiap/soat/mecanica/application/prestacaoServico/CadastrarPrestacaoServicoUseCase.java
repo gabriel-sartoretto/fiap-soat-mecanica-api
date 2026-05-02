@@ -10,6 +10,7 @@ import br.com.fiap.soat.mecanica.domain.servico.Servico;
 import br.com.fiap.soat.mecanica.domain.servico.ServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class CadastrarPrestacaoServicoUseCase {
     private final ServicoRepository servicoRepository;
     private final OrdemServicoRepository ordemServicoRepository;
 
+    @Transactional
     public PrestacaoServico executar(BigDecimal precoMaoDeObra, UUID ordemServicoId, UUID servicoId) {
 
         Servico servico = servicoRepository.buscarPorId(servicoId)
@@ -30,15 +32,25 @@ public class CadastrarPrestacaoServicoUseCase {
         OrdemServico ordemServico = ordemServicoRepository.buscarPorId(ordemServicoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Ordem Serviço não encontrado"));
 
-        if (servico.isInativo() || ordemServico.isInativo()) {
+        if (servico.isInativo() || ordemServico.isInativo())
             throw new RegraNegocioException("Serviço ou Ordem de Serviço está inativo");
-        }
 
-        if (prestacaoServicoRepository.existsByOrdemServicoIdAndServicoId(ordemServicoId, servicoId)) {
+        if (prestacaoServicoRepository.existsByOrdemServicoIdAndServicoId(ordemServicoId, servicoId))
             throw new RegraNegocioException("Serviço já adicionado na OS");
-        }
+
+        ordemServico.validarPermiteCadastrarPrestacaoServico();
 
         PrestacaoServico prestacaoServico = new PrestacaoServico(precoMaoDeObra, ordemServicoId, servicoId);
-        return prestacaoServicoRepository.salvar(prestacaoServico);
+        PrestacaoServico prestacaoSalva = prestacaoServicoRepository.salvar(prestacaoServico);
+
+        ordemServico.adicionarValor(prestacaoSalva.getSubtotal());
+
+        if (ordemServico.isRecebida()) {
+            ordemServico.iniciarDiagnostico();
+        }
+
+        ordemServicoRepository.salvar(ordemServico);
+
+        return prestacaoSalva;
     }
 }
