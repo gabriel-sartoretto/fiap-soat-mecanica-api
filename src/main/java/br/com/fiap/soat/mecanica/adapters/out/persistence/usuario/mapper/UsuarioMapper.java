@@ -8,12 +8,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioMapper {
 
-    public UsuarioEntity toEntity(Usuario Usuario) {
+    public UsuarioEntity toEntity(Usuario usuario) {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setNome(Usuario.getNome());
-        usuarioEntity.setEmail(Usuario.getEmail().getValue());
-        usuarioEntity.setSenha(Usuario.getSenha());
-        usuarioEntity.setCargoEnum(Usuario.getCargoEnum());
+        usuarioEntity.setId(usuario.getId());
+        usuarioEntity.setStatus(usuario.getStatus());
+        usuarioEntity.setNome(usuario.getNome());
+        usuarioEntity.setEmail(usuario.getEmail().getValue());
+        usuarioEntity.setSenha(usuario.getSenha());
+        usuarioEntity.setCargoEnum(usuario.getCargoEnum());
         return usuarioEntity;
     }
 

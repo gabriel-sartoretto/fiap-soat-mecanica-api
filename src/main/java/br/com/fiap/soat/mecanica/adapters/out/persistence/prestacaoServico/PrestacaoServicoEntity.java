@@ -33,7 +33,7 @@ public class PrestacaoServicoEntity extends PrincipalEntity {
     @Column(name = "subtotal", nullable = false)
     private BigDecimal subtotal;
 
-    @Column(name = "data_inicio", nullable = false)
+    @Column(name = "data_inicio")
     private LocalDateTime dataInicio;
 
     @Column(name = "data_fim")

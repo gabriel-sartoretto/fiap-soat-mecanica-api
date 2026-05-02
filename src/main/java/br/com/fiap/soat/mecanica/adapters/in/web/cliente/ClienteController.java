@@ -68,7 +68,7 @@ public class ClienteController {
     @GetMapping("/por-usuario/{usuarioId}")
     @PreAuthorize("hasRole('ATENDENTE')")
     @Operation(summary = "Cadastrar um cliente")
-    public ResponseEntity<ClienteResponse> buscarTodosPorUsuarioId(UUID usuarioId) {
+    public ResponseEntity<ClienteResponse> buscarTodosPorUsuarioId(@PathVariable UUID usuarioId) {
         Cliente cliente = buscarClientePorUsuarioIdUseCase.executar(usuarioId);
         return ResponseEntity.ok(ClienteResponseMapper.toResponse(cliente));
     }

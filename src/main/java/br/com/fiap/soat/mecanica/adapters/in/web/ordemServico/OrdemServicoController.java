@@ -4,6 +4,8 @@ import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoIn
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioOSResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.OrdemServicoResponseMapper;
+import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.TempoMedioOSResponseMapper;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarOrdemServicoPorIdUseCase;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarTodosOrdemServicoPorVeiculoIdUseCase;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.CadastrarOrdemServicoUseCase;
@@ -69,8 +71,7 @@ public class OrdemServicoController {
     @Operation(summary = "Buscar tempo médio dos serviços da Ordem de serviços por ID")
     public ResponseEntity<TempoMedioOSResponse> buscarTempoMedioDosServicos(@PathVariable UUID id) {
 
-        TempoMedioOSResponse response = consultarTempoMedioOSUseCase.executar(id);
-
-        return ResponseEntity.ok(response);
+        TempoMedioOSResult result = consultarTempoMedioOSUseCase.executar(id);
+        return ResponseEntity.ok(TempoMedioOSResponseMapper.toResponse(result));
     }
 }

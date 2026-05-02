@@ -10,6 +10,8 @@ public class VeiculoMapper {
 
     public VeiculoEntity toEntity(Veiculo veiculo) {
         VeiculoEntity veiculoEntity = new VeiculoEntity();
+        veiculoEntity.setId(veiculo.getId());
+        veiculoEntity.setStatus(veiculo.getStatus());
         veiculoEntity.setPlaca(veiculo.getPlaca().getValue());
         veiculoEntity.setMarca(veiculo.getMarca());
         veiculoEntity.setModelo(veiculo.getModelo());

@@ -1,8 +1,8 @@
 package br.com.fiap.soat.mecanica.application.ordemServico.usecase;
 
-import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioOSResponse;
-import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioServicoItemResponse;
 import br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico.projection.TempoMedioServicoProjection;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioServicoResult;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServico;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServicoRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ConsultarTempoMedioOSUseCase {
 
     private final PrestacaoServicoRepository prestacaoRepository;
 
-    public TempoMedioOSResponse executar(UUID osId) {
+    public TempoMedioOSResult executar(UUID osId) {
 
         Set<UUID> servicoIds = prestacaoRepository
                 .buscarTodosPorOrdemServicoId(osId)
@@ -32,7 +32,7 @@ public class ConsultarTempoMedioOSUseCase {
         List<TempoMedioServicoProjection> projections =
                 prestacaoRepository.calcularTempoMedioPorServicos(servicoIds);
 
-        List<TempoMedioServicoItemResponse> itens = new ArrayList<>();
+        List<TempoMedioServicoResult> itens = new ArrayList<>();
 
         long totalSegundos = 0;
 
@@ -44,13 +44,13 @@ public class ConsultarTempoMedioOSUseCase {
                 totalSegundos += segundos.longValue();
             }
 
-            itens.add(new TempoMedioServicoItemResponse(
+            itens.add(new TempoMedioServicoResult(
                     p.getNomeServico(),
                     formatarTempo(segundos)
             ));
         }
 
-        return new TempoMedioOSResponse(
+        return new TempoMedioOSResult(
                 itens,
                 formatarTempo((double) totalSegundos)
         );
