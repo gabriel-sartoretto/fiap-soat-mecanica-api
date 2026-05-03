@@ -8,6 +8,7 @@ import br.com.fiap.soat.mecanica.domain.valueobject.CPF;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,8 +45,10 @@ public class ClienteRepositoryImpl implements ClienteRepository {
     }
 
     @Override
-    public Optional<Cliente> buscarPorUsuarioId(UUID usuarioId) {
+    public List<Cliente> buscarPorUsuarioId(UUID usuarioId) {
         return clienteJpaRepository.findByUsuarioId(usuarioId)
-                .map(clienteMapper::toDomain);
+                .stream()
+                .map(clienteMapper::toDomain)
+                .toList();
     }
 }

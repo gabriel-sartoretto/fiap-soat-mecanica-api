@@ -2,6 +2,7 @@ package br.com.fiap.soat.mecanica.adapters.out.persistence.cliente;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,5 +12,5 @@ public interface ClienteJpaRepository extends JpaRepository<ClienteEntity, UUID>
 
     Optional<ClienteEntity> findByCnpj(String cnpj);
 
-    Optional<ClienteEntity> findByUsuarioId(UUID usuarioId);
+    List<ClienteEntity> findByUsuarioId(UUID usuarioId);
 }
