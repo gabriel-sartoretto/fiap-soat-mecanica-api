@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,32 +20,33 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BuscarClientePorCpfUseCaseTest {
+class AlterarClienteUseCaseTest {
 
     @Mock
     private ClienteRepository repository;
     @InjectMocks
-    private BuscarClientePorCpfUseCase useCase;
+    private AlterarClienteUseCase useCase;
 
     @Test
-    @DisplayName("Deve buscar cliente por CPF com sucesso")
-    void deveBuscar_quandoCpfExiste() {
+    @DisplayName("Deve alterar cliente com sucesso")
+    void deveAlterar_quandoClienteExiste() {
         // Arrange
         Cliente cliente = TestDataFactory.criarClienteComCpf();
-        when(repository.buscarPorCpf(any())).thenReturn(Optional.of(cliente));
+        when(repository.buscarPorId(any())).thenReturn(Optional.of(cliente));
+        when(repository.salvar(any())).thenReturn(cliente);
 
         // Act
-        Cliente resultado = useCase.executar("52998224725");
+        Cliente resultado = useCase.executar(cliente.getId(), "Novo Nome", "11988776655");
 
         // Assert
-        assertThat(resultado).isEqualTo(cliente);
+        assertThat(resultado).isNotNull();
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando cliente não encontrado por CPF")
+    @DisplayName("Deve lançar exceção quando cliente não encontrado")
     void deveLancarExcecao_quandoNaoEncontrado() {
-        when(repository.buscarPorCpf(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> useCase.executar("52998224725"))
+        when(repository.buscarPorId(any())).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> useCase.executar(UUID.randomUUID(), "Nome", null))
                 .isInstanceOf(RecursoNaoEncontradoException.class);
     }
 }

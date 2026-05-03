@@ -19,32 +19,32 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BuscarClientePorCpfUseCaseTest {
+class BuscarClientePorCnpjUseCaseTest {
 
     @Mock
     private ClienteRepository repository;
     @InjectMocks
-    private BuscarClientePorCpfUseCase useCase;
+    private BuscarClientePorCnpjUseCase useCase;
 
     @Test
-    @DisplayName("Deve buscar cliente por CPF com sucesso")
-    void deveBuscar_quandoCpfExiste() {
+    @DisplayName("Deve buscar cliente por CNPJ com sucesso")
+    void deveBuscar_quandoCnpjExiste() {
         // Arrange
-        Cliente cliente = TestDataFactory.criarClienteComCpf();
-        when(repository.buscarPorCpf(any())).thenReturn(Optional.of(cliente));
+        Cliente cliente = TestDataFactory.criarClienteComCnpj();
+        when(repository.buscarPorCnpj(any())).thenReturn(Optional.of(cliente));
 
         // Act
-        Cliente resultado = useCase.executar("52998224725");
+        Cliente resultado = useCase.executar("11222333000181");
 
         // Assert
         assertThat(resultado).isEqualTo(cliente);
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando cliente não encontrado por CPF")
+    @DisplayName("Deve lançar exceção quando cliente não encontrado por CNPJ")
     void deveLancarExcecao_quandoNaoEncontrado() {
-        when(repository.buscarPorCpf(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> useCase.executar("52998224725"))
+        when(repository.buscarPorCnpj(any())).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> useCase.executar("11222333000181"))
                 .isInstanceOf(RecursoNaoEncontradoException.class);
     }
 }
