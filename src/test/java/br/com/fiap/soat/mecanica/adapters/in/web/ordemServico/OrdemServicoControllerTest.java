@@ -5,7 +5,6 @@ import br.com.fiap.soat.mecanica.adapters.out.security.JwtService;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.*;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import br.com.fiap.soat.mecanica.util.TestDataFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ class OrdemServicoControllerTest {
     @MockitoBean
     private BuscarOrdemServicoPorIdUseCase buscarPorIdUseCase;
     @MockitoBean
-    private BuscarTodosOrdemServicoPorVeiculoIdUseCase buscarTodosPorVeiculoUseCase;
-    @MockitoBean
     private EnviarOrdemServicoParaAprovacaoUseCase enviarAprovacaoUseCase;
     @MockitoBean
     private IniciarExecucaoOrdemServicoUseCase iniciarExecucaoUseCase;
@@ -49,6 +46,8 @@ class OrdemServicoControllerTest {
     private PagarEEntregarOrdemServicoUseCase pagarEntregarUseCase;
     @MockitoBean
     private ConsultarTempoMedioOSUseCase consultarTempoMedioUseCase;
+    @MockitoBean
+    private BuscarTodosOrdemServicoPorVeiculoPlacaUseCase buscarTodosPorPlacaUseCase;
     @MockitoBean
     private JwtService jwtService;
     @MockitoBean
@@ -86,12 +85,12 @@ class OrdemServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve buscar todas OS por veículo ID")
-    void deveBuscarTodosPorVeiculoId() throws Exception {
+    @DisplayName("Deve buscar todas OS por placa do veículo")
+    void deveBuscarTodosPorVeiculoPlaca() throws Exception {
         OrdemServico os = TestDataFactory.criarOrdemServicoRecebida();
-        when(buscarTodosPorVeiculoUseCase.executar(any())).thenReturn(List.of(os));
+        when(buscarTodosPorPlacaUseCase.executar(anyString())).thenReturn(List.of(os));
 
-        mockMvc.perform(get("/ordem-servicos/veiculo/{veiculoId}", UUID.randomUUID()))
+        mockMvc.perform(get("/ordem-servicos/veiculo/placa/{placa}", "ABC1234"))
                 .andExpect(status().isOk());
     }
 }

@@ -1,5 +1,6 @@
 package br.com.fiap.soat.mecanica.domain.valueobject;
 
+import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class PlacaTest {
         @DisplayName("Deve lançar exceção quando Placa é nula")
         void deveLancarExcecao_quandoPlacaNula() {
             assertThatThrownBy(() -> new Placa(null))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(RegraNegocioException.class)
                     .hasMessage("Placa é obrigatória");
         }
 
@@ -60,7 +61,7 @@ class PlacaTest {
         @DisplayName("Deve lançar exceção quando Placa é vazia")
         void deveLancarExcecao_quandoPlacaVazia() {
             assertThatThrownBy(() -> new Placa(""))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(RegraNegocioException.class)
                     .hasMessage("Placa é obrigatória");
         }
 
@@ -68,7 +69,7 @@ class PlacaTest {
         @DisplayName("Deve lançar exceção quando Placa tem formato inválido")
         void deveLancarExcecao_quandoPlacaInvalida() {
             assertThatThrownBy(() -> new Placa("12345"))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(RegraNegocioException.class)
                     .hasMessage("Placa inválida");
         }
     }
