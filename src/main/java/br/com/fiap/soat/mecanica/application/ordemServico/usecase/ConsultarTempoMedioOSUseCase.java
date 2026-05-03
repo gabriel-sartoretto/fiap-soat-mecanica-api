@@ -1,16 +1,15 @@
 package br.com.fiap.soat.mecanica.application.ordemServico.usecase;
 
-import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioOSResponse;
-import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioServicoItemResponse;
-import br.com.fiap.soat.mecanica.adapters.out.persistence.prestacaoServico.projection.TempoMedioServicoProjection;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioServicoResult;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServico;
 import br.com.fiap.soat.mecanica.domain.prestacaoServico.PrestacaoServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,7 +20,7 @@ public class ConsultarTempoMedioOSUseCase {
 
     private final PrestacaoServicoRepository prestacaoRepository;
 
-    public TempoMedioOSResponse executar(UUID osId) {
+    public TempoMedioOSResult executar(UUID osId) {
 
         Set<UUID> servicoIds = prestacaoRepository
                 .buscarTodosPorOrdemServicoId(osId)
@@ -29,44 +28,18 @@ public class ConsultarTempoMedioOSUseCase {
                 .map(PrestacaoServico::getServicoId)
                 .collect(Collectors.toSet());
 
-        List<TempoMedioServicoProjection> projections =
+        List<TempoMedioServicoResult> itens =
                 prestacaoRepository.calcularTempoMedioPorServicos(servicoIds);
 
-        List<TempoMedioServicoItemResponse> itens = new ArrayList<>();
+        double totalSegundos = itens.stream()
+                .map(TempoMedioServicoResult::tempoMedioSegundos)
+                .filter(Objects::nonNull)
+                .mapToDouble(Double::doubleValue)
+                .sum();
 
-        long totalSegundos = 0;
-
-        for (TempoMedioServicoProjection p : projections) {
-
-            Double segundos = p.getTempoMedioSegundos();
-
-            if (segundos != null) {
-                totalSegundos += segundos.longValue();
-            }
-
-            itens.add(new TempoMedioServicoItemResponse(
-                    p.getNomeServico(),
-                    formatarTempo(segundos)
-            ));
-        }
-
-        return new TempoMedioOSResponse(
+        return new TempoMedioOSResult(
                 itens,
-                formatarTempo((double) totalSegundos)
+                totalSegundos
         );
-    }
-
-    private String formatarTempo(Double segundos) {
-        if (segundos == null) return "Sem histórico";
-
-        Duration d = Duration.ofSeconds(segundos.longValue());
-
-        long horas = d.toHours();
-        long minutos = d.toMinutesPart();
-
-        if (horas > 0) {
-            return horas + "h " + minutos + "min";
-        }
-        return minutos + " min";
     }
 }

@@ -7,7 +7,7 @@ public class OrdemServicoResponseMapper {
 
     public static OrdemServicoResponse toResponse(OrdemServico os) {
         return new OrdemServicoResponse(os.getId(), os.getStatus(), os.getSituacao(), os.getDataRecebida(),
-                os.getDataDiagnostico(), os.getDataExecucao(), os.getDataFinalizada(), os.getDataEntregue(),
+                os.getDataDiagnostico(), os.getDataAguardandoAprovacao(), os.getDataExecucao(), os.getDataFinalizada(), os.getDataEntregue(),
                 os.getPago(), os.getValorTotal(), os.getObservacao(), os.getVeiculoId(), os.getUsuarioId());
     }
 }

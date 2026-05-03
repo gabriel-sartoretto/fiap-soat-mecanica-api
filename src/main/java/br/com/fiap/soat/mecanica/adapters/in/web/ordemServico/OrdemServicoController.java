@@ -4,10 +4,9 @@ import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoIn
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioOSResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.OrdemServicoResponseMapper;
-import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarOrdemServicoPorIdUseCase;
-import br.com.fiap.soat.mecanica.application.ordemServico.usecase.BuscarTodosOrdemServicoPorVeiculoIdUseCase;
-import br.com.fiap.soat.mecanica.application.ordemServico.usecase.CadastrarOrdemServicoUseCase;
-import br.com.fiap.soat.mecanica.application.ordemServico.usecase.ConsultarTempoMedioOSUseCase;
+import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.TempoMedioOSResponseMapper;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
+import br.com.fiap.soat.mecanica.application.ordemServico.usecase.*;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -28,6 +27,11 @@ public class OrdemServicoController {
     private final BuscarOrdemServicoPorIdUseCase buscarOrdemServicoPorIdUseCase;
     private final BuscarTodosOrdemServicoPorVeiculoIdUseCase buscarTodosOrdemServicoPorVeiculoIdUseCase;
     private final ConsultarTempoMedioOSUseCase consultarTempoMedioOSUseCase;
+    private final PagarEEntregarOrdemServicoUseCase pagarEEntregarOrdemServicoUseCase;
+    private final IniciarExecucaoOrdemServicoUseCase iniciarExecucaoOrdemServicoUseCase;
+    private final CancelarOrdemServicoPorDesistenciaUseCase cancelarOrdemServicoPorDesistenciaUseCase;
+    private final EnviarOrdemServicoParaAprovacaoUseCase enviarOrdemServicoParaAprovacaoUseCase;
+    private final VoltarOrdemServicoParaDiagnosticoUseCase voltarOrdemServicoParaDiagnosticoUseCase;
 
     @PostMapping
     @PreAuthorize("hasRole('MECANICO')")
@@ -36,6 +40,50 @@ public class OrdemServicoController {
 
         OrdemServico os = cadastrarOrdemServicoUseCase.executar(request.observacao(), request.veiculoId());
 
+        return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
+    }
+
+    @PatchMapping("{id}/pagar")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Pagar e entregar uma Ordem de Serviço")
+    public ResponseEntity<OrdemServicoResponse> pagar(@PathVariable UUID id) {
+
+        OrdemServico os = pagarEEntregarOrdemServicoUseCase.executar(id);
+
+        return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
+    }
+
+    @PatchMapping("/{id}/iniciar-execucao")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Iniciar execução da ordem de serviço")
+    public ResponseEntity<OrdemServicoResponse> iniciarExecucao(@PathVariable UUID id) {
+
+        OrdemServico os = iniciarExecucaoOrdemServicoUseCase.executar(id);
+
+        return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
+    }
+
+    @PatchMapping("/{id}/aguardar-aprovacao")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Iniciar aguardando aprovação da ordem de serviço")
+    public ResponseEntity<OrdemServicoResponse> aguardarAprovacao(@PathVariable UUID id) {
+        OrdemServico os = enviarOrdemServicoParaAprovacaoUseCase.executar(id);
+        return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
+    }
+
+    @PatchMapping("/{id}/voltar-diagnostico")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Voltar a ordem de serviço para diagnóstico")
+    public ResponseEntity<OrdemServicoResponse> voltarDiagnostico(@PathVariable UUID id) {
+        OrdemServico os = voltarOrdemServicoParaDiagnosticoUseCase.executar(id);
+        return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
+    }
+
+    @PatchMapping("/{id}/cancelar")
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Cancelar ordem de serviço")
+    public ResponseEntity<OrdemServicoResponse> cancelar(@PathVariable UUID id) {
+        OrdemServico os = cancelarOrdemServicoPorDesistenciaUseCase.executar(id);
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
     }
 
@@ -69,8 +117,7 @@ public class OrdemServicoController {
     @Operation(summary = "Buscar tempo médio dos serviços da Ordem de serviços por ID")
     public ResponseEntity<TempoMedioOSResponse> buscarTempoMedioDosServicos(@PathVariable UUID id) {
 
-        TempoMedioOSResponse response = consultarTempoMedioOSUseCase.executar(id);
-
-        return ResponseEntity.ok(response);
+        TempoMedioOSResult result = consultarTempoMedioOSUseCase.executar(id);
+        return ResponseEntity.ok(TempoMedioOSResponseMapper.toResponse(result));
     }
 }

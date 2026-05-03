@@ -9,6 +9,8 @@ public class PecaMapper {
 
     public PecaEntity toEntity(Peca peca) {
         PecaEntity pecaEntity = new PecaEntity();
+        pecaEntity.setId(peca.getId());
+        pecaEntity.setStatus(peca.getStatus());
         pecaEntity.setStatus(peca.getStatus());
         pecaEntity.setNome(peca.getNome());
         pecaEntity.setMarca(peca.getMarca());

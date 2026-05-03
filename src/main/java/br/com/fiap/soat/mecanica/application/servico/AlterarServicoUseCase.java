@@ -18,6 +18,7 @@ public class AlterarServicoUseCase {
     public Servico executar(UUID id, String nome, String descricao) {
 
         servicoRepository.buscarPorNome(nome)
+                .filter(servicoEncontrada -> !servicoEncontrada.getId().equals(id))
                 .ifPresent((servico) -> {
                     throw new RegraNegocioException("Serviço com esse nome já existe");
                 });

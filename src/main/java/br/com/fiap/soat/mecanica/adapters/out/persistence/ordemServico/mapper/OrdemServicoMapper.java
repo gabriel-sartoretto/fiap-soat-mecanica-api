@@ -14,6 +14,7 @@ public class OrdemServicoMapper {
         ordemServicoEntity.setSituacao(ordemServico.getSituacao());
         ordemServicoEntity.setDataRecebida(ordemServico.getDataRecebida());
         ordemServicoEntity.setDataDiagnostico(ordemServico.getDataDiagnostico());
+        ordemServicoEntity.setDataAguardandoAprovacao(ordemServico.getDataAguardandoAprovacao());
         ordemServicoEntity.setDataExecucao(ordemServico.getDataExecucao());
         ordemServicoEntity.setDataFinalizada(ordemServico.getDataFinalizada());
         ordemServicoEntity.setDataEntregue(ordemServico.getDataEntregue());
@@ -32,6 +33,7 @@ public class OrdemServicoMapper {
                 ordemServicoEntity.getSituacao(),
                 ordemServicoEntity.getDataRecebida(),
                 ordemServicoEntity.getDataDiagnostico(),
+                ordemServicoEntity.getDataAguardandoAprovacao(),
                 ordemServicoEntity.getDataExecucao(),
                 ordemServicoEntity.getDataFinalizada(),
                 ordemServicoEntity.getDataEntregue(),
