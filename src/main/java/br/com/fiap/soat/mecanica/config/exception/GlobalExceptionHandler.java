@@ -156,7 +156,7 @@ public class GlobalExceptionHandler {
                 new ErrorResponse(
                         400,
                         "Bad Request",
-                        ex.getMessage(),
+                        "Valor enviado incorretamente",
                         null,
                         null,
                         null
