@@ -69,4 +69,26 @@ class PrestacaoServicoControllerTest {
         mockMvc.perform(get("/prestacao-servico/por-ordem-servico/{osId}", UUID.randomUUID()))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve inativar prestaÃ§Ã£o de serviÃ§o")
+    void deveInativar() throws Exception {
+        PrestacaoServico ps = TestDataFactory.criarPrestacaoServicoInativa();
+        when(inativarUseCase.executar(any())).thenReturn(ps);
+
+        mockMvc.perform(patch("/prestacao-servico/{id}/inativar", ps.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve finalizar prestaÃ§Ã£o de serviÃ§o")
+    void deveFinalizar() throws Exception {
+        PrestacaoServico ps = TestDataFactory.criarPrestacaoServicoFinalizada();
+        when(finalizarUseCase.executar(any())).thenReturn(ps);
+
+        mockMvc.perform(patch("/prestacao-servico/{id}/finalizar", ps.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
 }

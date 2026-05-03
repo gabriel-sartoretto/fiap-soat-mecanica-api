@@ -72,4 +72,26 @@ class VeiculoControllerTest {
         mockMvc.perform(get("/veiculos/por-placa/{placa}", "ABC1234"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser(roles = "ATENDENTE")
+    @DisplayName("Deve buscar veÃ­culo por ID")
+    void deveBuscarPorId() throws Exception {
+        Veiculo veiculo = TestDataFactory.criarVeiculoValido();
+        when(buscarPorIdUseCase.executar(any())).thenReturn(veiculo);
+
+        mockMvc.perform(get("/veiculos/{id}", veiculo.getId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ATENDENTE")
+    @DisplayName("Deve buscar veÃ­culos por cliente ID")
+    void deveBuscarPorClienteId() throws Exception {
+        Veiculo veiculo = TestDataFactory.criarVeiculoValido();
+        when(buscarTodosPorClienteUseCase.executar(any())).thenReturn(List.of(veiculo));
+
+        mockMvc.perform(get("/veiculos/por-cliente/{clienteId}", UUID.randomUUID()))
+                .andExpect(status().isOk());
+    }
 }

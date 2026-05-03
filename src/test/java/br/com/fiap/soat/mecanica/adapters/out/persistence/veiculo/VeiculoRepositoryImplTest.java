@@ -56,4 +56,16 @@ class VeiculoRepositoryImplTest {
         // Assert
         assertThat(veiculos).hasSize(2);
     }
+
+    @Test
+    @DisplayName("Deve buscar veÃ­culo por ID")
+    void deveBuscarPorId() {
+        Veiculo veiculo = new Veiculo(new Placa("ABC1234"), "Toyota", "Corolla", "2023", 2, UUID.randomUUID());
+        Veiculo salvo = repository.salvar(veiculo);
+
+        Optional<Veiculo> encontrado = repository.buscarPorId(salvo.getId());
+
+        assertThat(encontrado).isPresent();
+        assertThat(encontrado.get().getPlaca().getValue()).isEqualTo("ABC1234");
+    }
 }

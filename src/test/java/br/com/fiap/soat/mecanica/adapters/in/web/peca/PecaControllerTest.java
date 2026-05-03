@@ -65,4 +65,21 @@ class PecaControllerTest {
         mockMvc.perform(get("/pecas/{id}", peca.getId()))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser(roles = "ALMOXARIFE")
+    @DisplayName("Deve alterar peÃ§a com role ALMOXARIFE")
+    void deveAlterar_quandoAlmoxarife() throws Exception {
+        Peca peca = TestDataFactory.criarPecaValida();
+        when(alterarUseCase.executar(any(), anyString(), anyString(), any(), any(Integer.class))).thenReturn(peca);
+
+        String json = """
+                {"nome":"Pastilha","marca":"Bosch","valorUnitario":180,"quantidadeEstoque":20}
+                """;
+
+        mockMvc.perform(put("/pecas/{id}", peca.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json).with(csrf()))
+                .andExpect(status().isOk());
+    }
 }

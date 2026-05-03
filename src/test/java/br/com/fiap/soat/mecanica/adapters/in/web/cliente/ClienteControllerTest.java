@@ -72,4 +72,43 @@ class ClienteControllerTest {
         mockMvc.perform(get("/clientes/por-cpf/{cpf}", "52998224725"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser(roles = "ATENDENTE")
+    @DisplayName("Deve alterar cliente")
+    void deveAlterar() throws Exception {
+        Cliente cliente = TestDataFactory.criarClienteComCpf();
+        when(alterarUseCase.executar(any(), anyString(), anyString())).thenReturn(cliente);
+
+        String json = """
+                {"nome":"Cliente Alterado","telefone":"11999887766"}
+                """;
+
+        mockMvc.perform(patch("/clientes/{id}", cliente.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ATENDENTE")
+    @DisplayName("Deve buscar cliente por CNPJ")
+    void deveBuscarPorCnpj() throws Exception {
+        Cliente cliente = TestDataFactory.criarClienteComCnpj();
+        when(buscarCnpjUseCase.executar(anyString())).thenReturn(cliente);
+
+        mockMvc.perform(get("/clientes/por-cnpj/{cnpj}", "11222333000181"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ATENDENTE")
+    @DisplayName("Deve buscar clientes por usuÃ¡rio ID")
+    void deveBuscarTodosPorUsuarioId() throws Exception {
+        Cliente cliente = TestDataFactory.criarClienteComCpf();
+        when(buscarUsuarioIdUseCase.executar(any())).thenReturn(List.of(cliente));
+
+        mockMvc.perform(get("/clientes/por-usuario/{usuarioId}", UUID.randomUUID()))
+                .andExpect(status().isOk());
+    }
 }

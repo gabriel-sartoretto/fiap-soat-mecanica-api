@@ -54,4 +54,14 @@ class PrestacaoServicoRepositoryImplTest {
         // Assert
         assertThat(lista).hasSize(2);
     }
+
+    @Test
+    @DisplayName("Deve verificar existÃªncia por OS ID e serviÃ§o ID")
+    void deveVerificarExistenciaPorOsIdEServicoId() {
+        UUID osId = UUID.randomUUID();
+        UUID servicoId = UUID.randomUUID();
+        repository.salvar(new PrestacaoServico(new BigDecimal("100"), osId, servicoId));
+
+        assertThat(repository.existsByOrdemServicoIdAndServicoId(osId, servicoId)).isTrue();
+    }
 }

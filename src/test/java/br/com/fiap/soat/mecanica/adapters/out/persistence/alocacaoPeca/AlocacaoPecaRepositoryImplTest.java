@@ -36,4 +36,36 @@ class AlocacaoPecaRepositoryImplTest {
         assertThat(encontrada).isPresent();
         assertThat(encontrada.get().getQuantidadeNecessaria()).isEqualTo(2);
     }
+
+    @Test
+    @DisplayName("Deve verificar alocaÃ§Ã£o ativa por prestaÃ§Ã£o e peÃ§a")
+    void deveVerificarExistenciaPorPrestacaoServicoEPeca() {
+        UUID prestacaoServicoId = UUID.randomUUID();
+        UUID pecaId = UUID.randomUUID();
+        repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, pecaId));
+
+        assertThat(repository.existsByPrestacaoServicoIdAndPecaId(prestacaoServicoId, pecaId)).isTrue();
+    }
+
+    @Test
+    @DisplayName("Deve buscar todas alocaÃ§Ãµes por prestaÃ§Ã£o de serviÃ§o")
+    void deveBuscarTodosPorPrestacaoServicoId() {
+        UUID prestacaoServicoId = UUID.randomUUID();
+        repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, UUID.randomUUID()));
+        repository.salvar(new AlocacaoPeca(3, prestacaoServicoId, UUID.randomUUID()));
+
+        assertThat(repository.buscarTodosPorPrestacaoServicoId(prestacaoServicoId)).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("NÃ£o deve considerar alocaÃ§Ã£o inativa como existente")
+    void naoDeveConsiderarAlocacaoInativaComoExistente() {
+        UUID prestacaoServicoId = UUID.randomUUID();
+        UUID pecaId = UUID.randomUUID();
+        AlocacaoPeca inativa = repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, pecaId));
+        inativa.inativar();
+        repository.salvar(inativa);
+
+        assertThat(repository.existsByPrestacaoServicoIdAndPecaId(prestacaoServicoId, pecaId)).isFalse();
+    }
 }

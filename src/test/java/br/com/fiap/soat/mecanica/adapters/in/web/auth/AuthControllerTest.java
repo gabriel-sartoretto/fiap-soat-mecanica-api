@@ -48,6 +48,6 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("jwt-token-123"));
+                .andExpect(jsonPath("$.jwt").value("jwt-token-123"));
     }
 }

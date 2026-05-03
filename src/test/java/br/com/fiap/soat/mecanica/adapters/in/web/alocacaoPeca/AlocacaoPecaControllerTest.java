@@ -51,7 +51,18 @@ class AlocacaoPecaControllerTest {
 
         mockMvc.perform(post("/alocacao-pecas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json).with(csrf()))
+                .content(json).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ALMOXARIFE")
+    @DisplayName("Deve inativar alocaÃ§Ã£o com role ALMOXARIFE")
+    void deveInativar_quandoAlmoxarife() throws Exception {
+        AlocacaoPeca al = TestDataFactory.criarAlocacaoPecaInativa();
+        when(inativarUseCase.executar(any())).thenReturn(al);
+
+        mockMvc.perform(patch("/alocacao-pecas/{id}/inativar", al.getId()).with(csrf()))
                 .andExpect(status().isOk());
     }
 }

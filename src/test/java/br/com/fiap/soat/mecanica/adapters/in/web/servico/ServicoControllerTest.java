@@ -53,7 +53,46 @@ class ServicoControllerTest {
 
         mockMvc.perform(post("/servicos")
                         .contentType(MediaType.APPLICATION_JSON)
+                .content(json).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve alterar serviÃ§o")
+    void deveAlterar() throws Exception {
+        Servico servico = TestDataFactory.criarServicoValido();
+        when(alterarUseCase.executar(any(), anyString(), anyString())).thenReturn(servico);
+
+        String json = """
+                {"nome":"Troca de Ã“leo","descricao":"DescriÃ§Ã£o alterada"}
+                """;
+
+        mockMvc.perform(put("/servicos/{id}", servico.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(json).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve ativar serviÃ§o")
+    void deveAtivar() throws Exception {
+        Servico servico = TestDataFactory.criarServicoValido();
+        when(ativarUseCase.executar(any())).thenReturn(servico);
+
+        mockMvc.perform(patch("/servicos/{id}/ativar", servico.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve inativar serviÃ§o")
+    void deveInativar() throws Exception {
+        Servico servico = TestDataFactory.criarServicoValido();
+        when(inativarUseCase.executar(any())).thenReturn(servico);
+
+        mockMvc.perform(patch("/servicos/{id}/inativar", servico.getId()).with(csrf()))
                 .andExpect(status().isOk());
     }
 }

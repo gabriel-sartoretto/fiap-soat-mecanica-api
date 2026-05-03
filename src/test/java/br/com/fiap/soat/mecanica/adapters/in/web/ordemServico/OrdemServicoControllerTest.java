@@ -2,6 +2,8 @@ package br.com.fiap.soat.mecanica.adapters.in.web.ordemServico;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.security.CustomUserDetailsService;
 import br.com.fiap.soat.mecanica.adapters.out.security.JwtService;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioServicoResult;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.*;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import br.com.fiap.soat.mecanica.util.TestDataFactory;
@@ -91,6 +93,75 @@ class OrdemServicoControllerTest {
         when(buscarTodosPorPlacaUseCase.executar(anyString())).thenReturn(List.of(os));
 
         mockMvc.perform(get("/ordem-servicos/veiculo/placa/{placa}", "ABC1234"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve pagar e entregar OS")
+    void devePagarEEntregar() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoEntregue();
+        when(pagarEntregarUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/pagar", os.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve iniciar execuÃ§Ã£o da OS")
+    void deveIniciarExecucao() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoEmExecucao();
+        when(iniciarExecucaoUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/iniciar-execucao", os.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve enviar OS para aguardar aprovaÃ§Ã£o")
+    void deveEnviarParaAguardarAprovacao() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoAguardandoAprovacao();
+        when(enviarAprovacaoUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/enviar-para-aguardar-aprovacao", os.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve voltar OS para diagnÃ³stico")
+    void deveVoltarDiagnostico() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoEmDiagnostico();
+        when(voltarDiagnosticoUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/voltar-diagnostico", os.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve cancelar OS")
+    void deveCancelar() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoInativa();
+        when(cancelarUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/cancelar", os.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve buscar tempo mÃ©dio dos serviÃ§os")
+    void deveBuscarTempoMedioDosServicos() throws Exception {
+        TempoMedioOSResult result = new TempoMedioOSResult(
+                List.of(new TempoMedioServicoResult("Troca de Ã“leo", 3600.0)),
+                3600.0
+        );
+        when(consultarTempoMedioUseCase.executar(any())).thenReturn(result);
+
+        mockMvc.perform(get("/ordem-servicos/{id}/tempo-medio", UUID.randomUUID()))
                 .andExpect(status().isOk());
     }
 }
