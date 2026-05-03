@@ -20,15 +20,27 @@ public class Senha {
             throw new RegraNegocioException("Senha muito longa");
         }
 
-        if (!valor.matches(".*\\d.*")) {
+        if (!contemNumero(valor)) {
             throw new RegraNegocioException("Senha deve conter ao menos um número");
         }
 
-        if (!valor.matches(".*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/].*")) {
+        if (!contemCaractereEspecial(valor)) {
             throw new RegraNegocioException("Senha deve conter ao menos um caractere especial");
         }
 
         this.valor = valor;
+    }
+
+    private boolean contemNumero(String valor) {
+        return valor.chars().anyMatch(Character::isDigit);
+    }
+
+    private boolean contemCaractereEspecial(String valor) {
+        return valor.chars().anyMatch(this::isCaractereEspecial);
+    }
+
+    private boolean isCaractereEspecial(int caractere) {
+        return "!@#$%^&*()_+-={}[]:;\"'<>,.?/".indexOf(caractere) >= 0;
     }
 
     public String getValor() {

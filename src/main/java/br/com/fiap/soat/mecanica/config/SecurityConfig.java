@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ordem-servicos/veiculo/placa/**").permitAll()
                         // qualquer outra rota precisa de autenticação
                         .anyRequest().authenticated()
                 )

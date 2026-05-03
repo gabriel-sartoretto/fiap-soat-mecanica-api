@@ -25,13 +25,13 @@ public class OrdemServicoController {
 
     private final CadastrarOrdemServicoUseCase cadastrarOrdemServicoUseCase;
     private final BuscarOrdemServicoPorIdUseCase buscarOrdemServicoPorIdUseCase;
-    private final BuscarTodosOrdemServicoPorVeiculoIdUseCase buscarTodosOrdemServicoPorVeiculoIdUseCase;
     private final ConsultarTempoMedioOSUseCase consultarTempoMedioOSUseCase;
     private final PagarEEntregarOrdemServicoUseCase pagarEEntregarOrdemServicoUseCase;
     private final IniciarExecucaoOrdemServicoUseCase iniciarExecucaoOrdemServicoUseCase;
     private final CancelarOrdemServicoPorDesistenciaUseCase cancelarOrdemServicoPorDesistenciaUseCase;
     private final EnviarOrdemServicoParaAprovacaoUseCase enviarOrdemServicoParaAprovacaoUseCase;
     private final VoltarOrdemServicoParaDiagnosticoUseCase voltarOrdemServicoParaDiagnosticoUseCase;
+    private final BuscarTodosOrdemServicoPorVeiculoPlacaUseCase buscarTodosOrdemServicoPorVeiculoPlacaUseCase;
 
     @PostMapping
     @PreAuthorize("hasRole('MECANICO')")
@@ -46,7 +46,7 @@ public class OrdemServicoController {
     @PatchMapping("{id}/pagar")
     @PreAuthorize("hasRole('MECANICO')")
     @Operation(summary = "Pagar e entregar uma Ordem de Serviço")
-    public ResponseEntity<OrdemServicoResponse> pagar(@PathVariable UUID id) {
+    public ResponseEntity<OrdemServicoResponse> pagarEEntregar(@PathVariable UUID id) {
 
         OrdemServico os = pagarEEntregarOrdemServicoUseCase.executar(id);
 
@@ -63,10 +63,10 @@ public class OrdemServicoController {
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
     }
 
-    @PatchMapping("/{id}/aguardar-aprovacao")
+    @PatchMapping("/{id}/enviar-para-aguardar-aprovacao")
     @PreAuthorize("hasRole('MECANICO')")
     @Operation(summary = "Iniciar aguardando aprovação da ordem de serviço")
-    public ResponseEntity<OrdemServicoResponse> aguardarAprovacao(@PathVariable UUID id) {
+    public ResponseEntity<OrdemServicoResponse> enviarParaAguardarAprovacao(@PathVariable UUID id) {
         OrdemServico os = enviarOrdemServicoParaAprovacaoUseCase.executar(id);
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
     }
@@ -97,13 +97,12 @@ public class OrdemServicoController {
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
     }
 
-    @GetMapping("/veiculo/{veiculoId}")
-    @PreAuthorize("hasRole('MECANICO')")
-    @Operation(summary = "Buscar Ordem de serviços por veículo ID")
-    public ResponseEntity<List<OrdemServicoResponse>> buscarTodosPorVeiculoId(
-            @PathVariable UUID veiculoId) {
+    @GetMapping("/veiculo/placa/{placa}")
+    @Operation(summary = "Buscar Ordem de serviços por placa do veículo")
+    public ResponseEntity<List<OrdemServicoResponse>> buscarTodosPorPlaca(
+            @PathVariable String placa) {
 
-        List<OrdemServico> ordemServicos = buscarTodosOrdemServicoPorVeiculoIdUseCase.executar(veiculoId);
+        List<OrdemServico> ordemServicos = buscarTodosOrdemServicoPorVeiculoPlacaUseCase.executar(placa);
 
         List<OrdemServicoResponse> response = ordemServicos.stream()
                 .map(OrdemServicoResponseMapper::toResponse)
