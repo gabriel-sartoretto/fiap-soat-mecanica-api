@@ -22,7 +22,6 @@ public class PrestacaoServicoController {
 
     private final CadastrarPrestacaoServicoUseCase cadastrarUseCase;
     private final BuscarTodosPrestacaoServicoProOrdemServicoIdUseCase buscarTodosPrestacaoServicoProOrdemServicoIdUseCase;
-    private final AtivarPrestacaoServicoUseCase ativarPrestacaoServicoUseCase;
     private final InativarPrestacaoServicoUseCase inativarPrestacaoServicoUseCase;
     private final FinalizarPrestacaoServicoUseCase finalizarPrestacaoServicoUseCase;
 
@@ -52,16 +51,6 @@ public class PrestacaoServicoController {
                 .toList();
 
         return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/{id}/ativar")
-    @PreAuthorize("hasRole('MECANICO')")
-    @Operation(summary = "Ativar Prestação de Serviço por Id")
-    public ResponseEntity<PrestacaoServicoResponse> ativar(@PathVariable UUID id) {
-
-        PrestacaoServico ps = ativarPrestacaoServicoUseCase.executar(id);
-
-        return ResponseEntity.ok(PrestacaoServicoResponseMapper.toResponse(ps));
     }
 
     @PatchMapping("/{id}/inativar")

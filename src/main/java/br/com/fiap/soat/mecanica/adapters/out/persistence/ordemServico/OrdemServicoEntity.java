@@ -1,7 +1,7 @@
 package br.com.fiap.soat.mecanica.adapters.out.persistence.ordemServico;
 
 import br.com.fiap.soat.mecanica.adapters.out.persistence.PrincipalEntity;
-import br.com.fiap.soat.mecanica.domain.enums.SituacaoOrdemServico;
+import br.com.fiap.soat.mecanica.domain.enums.SituacaoOrdemServicoEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,13 +30,16 @@ public class OrdemServicoEntity extends PrincipalEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situacao", nullable = false)
-    private SituacaoOrdemServico situacao;
+    private SituacaoOrdemServicoEnum situacao;
 
     @Column(name = "data_recebida", nullable = false)
     private LocalDateTime dataRecebida;
 
     @Column(name = "data_diagnostico")
     private LocalDateTime dataDiagnostico;
+
+    @Column(name = "data_aguardando_aprovacao")
+    private LocalDateTime dataAguardandoAprovacao;
 
     @Column(name = "data_execucao")
     private LocalDateTime dataExecucao;
@@ -50,7 +53,7 @@ public class OrdemServicoEntity extends PrincipalEntity {
     @Column(name = "pago")
     private Boolean pago;
 
-    @Column(name = "valor_total")
+    @Column(name = "valor_total", nullable = false)
     private BigDecimal valorTotal;
 
     @Column(name = "observacao")
