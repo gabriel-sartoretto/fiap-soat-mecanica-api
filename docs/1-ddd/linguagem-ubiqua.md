@@ -14,7 +14,7 @@
 
 - **Ordem de Serviço (OS):** O documento central que registra todo o ciclo de vida do atendimento, desde a entrada do veículo até a sua entrega, contendo a listagem de diagnósticos e intervenções.
 
-- **Status da OS:** Indicador do estágio atual do processo de trabalho. No sistema em questão teremos os seguintes estados: "Recebida", "Em Diagnóstico", "Aguardando Aprovação", "Em Separação", "Em Execução", "Finalizada" e "Entregue".
+- **Situação da OS:** Indicador do estágio atual do processo de trabalho. No sistema em questão teremos os seguintes estados: "Recebida", "Em Diagnóstico", "Aguardando Aprovação", "Em Separação", "Em Execução", "Finalizada" e "Entregue".
 
 - **Diagnóstico:** Parecer técnico emitido pelo mecânico após a inspeção, detalhando os problemas identificados e as soluções necessárias.
 

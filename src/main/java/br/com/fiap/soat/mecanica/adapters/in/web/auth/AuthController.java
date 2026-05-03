@@ -19,7 +19,7 @@ public class AuthController {
     private final AutenticarUsuarioUseCase autenticarUsuarioUseCase;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
 
         String token = autenticarUsuarioUseCase.login(request.email(), request.senha());
 

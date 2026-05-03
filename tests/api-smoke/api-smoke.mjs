@@ -319,8 +319,8 @@ async function runMecanicoTests() {
     request("GET", `/ordem-servicos/${state.ordemServico?.id}`, { token }),
   );
 
-  await test("MECANICO - GET /ordem-servicos/veiculo/{veiculoId}", 200, () =>
-    request("GET", `/ordem-servicos/veiculo/${state.veiculo?.id ?? v9.veiculoId}`, { token }),
+  await test("MECANICO - GET /ordem-servicos/veiculo/placa/{placa}", 200, () =>
+    request("GET", `/ordem-servicos/veiculo/placa/${state.veiculo?.placa ?? "ABC1D23"}`, { token })
   );
 
   await test("MECANICO - GET /ordem-servicos/{id}/tempo-medio", 200, () =>
@@ -344,16 +344,12 @@ async function runMecanicoTests() {
     request("GET", `/prestacao-servico/por-ordem-servico/${state.ordemServico?.id}`, { token }),
   );
 
-  await test("MECANICO - PATCH /prestacao-servico/{id}/ativar", 200, () =>
-    request("PATCH", `/prestacao-servico/${state.prestacaoServico?.id}/ativar`, { token }),
+  await test("MECANICO - enviar OS para aprovação", 200, () =>
+    request("PATCH", `/ordem-servicos/${state.ordemServico?.id}/enviar-para-aguardar-aprovacao`, { token }),
   );
 
-  await test("MECANICO - PATCH /prestacao-servico/{id}/inativar", 200, () =>
-    request("PATCH", `/prestacao-servico/${state.prestacaoServico?.id}/inativar`, { token }),
-  );
-
-  await test("MECANICO - reativar prestação para finalizar", 200, () =>
-    request("PATCH", `/prestacao-servico/${state.prestacaoServico?.id}/ativar`, { token }),
+  await test("MECANICO - iniciar execução da OS", 200, () =>
+    request("PATCH", `/ordem-servicos/${state.ordemServico?.id}/iniciar-execucao`, { token }),
   );
 
   await test("MECANICO - PATCH /prestacao-servico/{id}/finalizar", 200, () =>

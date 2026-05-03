@@ -68,7 +68,7 @@ public class ClienteController {
 
     @GetMapping("/por-usuario/{usuarioId}")
     @PreAuthorize("hasRole('ATENDENTE')")
-    @Operation(summary = "Cadastrar um cliente")
+    @Operation(summary = "Busca todos os clientes cadastrados por um usuário")
     public ResponseEntity<List<ClienteResponse>> buscarTodosPorUsuarioId(@PathVariable UUID usuarioId) {
         List<Cliente> clientes = buscarClientePorUsuarioIdUseCase.executar(usuarioId);
         List<ClienteResponse> response = clientes.stream()
