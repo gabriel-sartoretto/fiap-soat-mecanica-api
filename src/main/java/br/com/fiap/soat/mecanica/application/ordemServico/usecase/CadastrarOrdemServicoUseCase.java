@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.application.ordemServico.usecase;
 
-import br.com.fiap.soat.mecanica.adapters.in.web.security.CurrentUserProvider;
+import br.com.fiap.soat.mecanica.application.security.CurrentUserPort;
 import br.com.fiap.soat.mecanica.domain.enums.CargoEnum;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class CadastrarOrdemServicoUseCase {
 
     private final OrdemServicoRepository repository;
-    private final CurrentUserProvider currentUser;
+    private final CurrentUserPort currentUser;
 
     public OrdemServico executar(String observacao, UUID veiculoId) {
 

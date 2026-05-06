@@ -1,5 +1,6 @@
 package br.com.fiap.soat.mecanica.adapters.in.web.security;
 
+import br.com.fiap.soat.mecanica.application.security.CurrentUserPort;
 import br.com.fiap.soat.mecanica.domain.exception.RecursoNaoEncontradoException;
 import br.com.fiap.soat.mecanica.domain.usuario.Usuario;
 import br.com.fiap.soat.mecanica.domain.usuario.UsuarioRepository;
@@ -11,10 +12,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CurrentUserProvider {
+public class CurrentUserProvider implements CurrentUserPort {
 
     private final UsuarioRepository usuarioRepository;
 
+    @Override
     public Usuario get() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

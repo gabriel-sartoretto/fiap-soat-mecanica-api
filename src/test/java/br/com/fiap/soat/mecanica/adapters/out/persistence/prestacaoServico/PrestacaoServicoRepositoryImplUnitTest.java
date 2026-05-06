@@ -33,7 +33,7 @@ class PrestacaoServicoRepositoryImplUnitTest {
     @DisplayName("Deve calcular tempo medio por servicos")
     void deveCalcularTempoMedioPorServicos() {
         UUID servicoId = UUID.randomUUID();
-        when(projection.getNomeServico()).thenReturn("Troca de óleo");
+        when(projection.getNomeServico()).thenReturn("Troca de oleo");
         when(projection.getTempoMedioSegundos()).thenReturn(3600.0);
         when(prestacaoServicoJpaRepository.calcularTempoMedioPorServicos(Set.of(servicoId)))
                 .thenReturn(List.of(projection));

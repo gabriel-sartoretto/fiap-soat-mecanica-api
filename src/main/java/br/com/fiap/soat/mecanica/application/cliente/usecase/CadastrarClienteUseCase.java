@@ -1,6 +1,6 @@
 package br.com.fiap.soat.mecanica.application.cliente.usecase;
 
-import br.com.fiap.soat.mecanica.adapters.in.web.security.CurrentUserProvider;
+import br.com.fiap.soat.mecanica.application.security.CurrentUserPort;
 import br.com.fiap.soat.mecanica.domain.cliente.Cliente;
 import br.com.fiap.soat.mecanica.domain.cliente.ClienteRepository;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class CadastrarClienteUseCase {
 
     private final ClienteRepository clienteRepository;
-    private final CurrentUserProvider currentUser;
+    private final CurrentUserPort currentUser;
 
     public Cliente executar(String nome, String cpf, String cnpj, String email, String telefone) {
 

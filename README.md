@@ -113,7 +113,20 @@ Antes de rodar o projeto, instale:
 
 ## Como rodar
 
+Existem duas formas de executar o projeto. Use apenas uma delas por vez:
+
+- **Aplicacao local + banco no Docker:** suba somente o PostgreSQL pelo Docker e
+  rode a API pela IDE ou pelo Maven.
+- **Tudo via Docker Compose:** suba a API e os demais servicos pelo Docker.
+
+> Atencao: o comando `docker-compose up -d` tambem sobe a API no container
+> `mecanica-api` usando a porta `8080`. Se a API ja estiver rodando pelo Docker,
+> nao execute a aplicacao tambem pela IDE/Maven na mesma porta, pois ocorrera o
+> erro `Port 8080 was already in use`.
+
 ### 1. Subir somente o banco PostgreSQL
+
+Use este modo quando quiser rodar a aplicacao localmente pela IDE ou pelo Maven.
 
 ```bash
 docker-compose up -d postgres
@@ -168,6 +181,9 @@ API:        http://localhost:8080
 PostgreSQL: localhost:5433
 SonarQube: http://localhost:9000
 ```
+
+Neste modo, a API ja fica disponivel em `http://localhost:8080` pelo container
+`mecanica-api`. Nao e necessario iniciar a aplicacao pela IDE/Maven.
 
 ## Swagger
 
