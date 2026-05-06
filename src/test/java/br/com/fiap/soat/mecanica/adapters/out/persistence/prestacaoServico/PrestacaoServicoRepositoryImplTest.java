@@ -56,7 +56,7 @@ class PrestacaoServicoRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve verificar existÃªncia por OS ID e serviÃ§o ID")
+    @DisplayName("Deve verificar existencia por OS ID e servico ID")
     void deveVerificarExistenciaPorOsIdEServicoId() {
         UUID osId = UUID.randomUUID();
         UUID servicoId = UUID.randomUUID();

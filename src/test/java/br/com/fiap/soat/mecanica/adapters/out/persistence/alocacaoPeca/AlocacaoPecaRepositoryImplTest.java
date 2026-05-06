@@ -38,7 +38,7 @@ class AlocacaoPecaRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve verificar alocaÃ§Ã£o ativa por prestaÃ§Ã£o e peÃ§a")
+    @DisplayName("Deve verificar alocacao ativa por prestacao e peca")
     void deveVerificarExistenciaPorPrestacaoServicoEPeca() {
         UUID prestacaoServicoId = UUID.randomUUID();
         UUID pecaId = UUID.randomUUID();
@@ -48,7 +48,7 @@ class AlocacaoPecaRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todas alocaÃ§Ãµes por prestaÃ§Ã£o de serviÃ§o")
+    @DisplayName("Deve buscar todas alocacoes por prestacao de servico")
     void deveBuscarTodosPorPrestacaoServicoId() {
         UUID prestacaoServicoId = UUID.randomUUID();
         repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, UUID.randomUUID()));
@@ -58,7 +58,7 @@ class AlocacaoPecaRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("NÃ£o deve considerar alocaÃ§Ã£o inativa como existente")
+    @DisplayName("Nao deve considerar alocacao inativa como existente")
     void naoDeveConsiderarAlocacaoInativaComoExistente() {
         UUID prestacaoServicoId = UUID.randomUUID();
         UUID pecaId = UUID.randomUUID();

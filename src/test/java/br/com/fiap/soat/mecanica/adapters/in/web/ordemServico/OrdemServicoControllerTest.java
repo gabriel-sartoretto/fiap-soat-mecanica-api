@@ -109,7 +109,7 @@ class OrdemServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve iniciar execuÃ§Ã£o da OS")
+    @DisplayName("Deve iniciar execucao da OS")
     void deveIniciarExecucao() throws Exception {
         OrdemServico os = TestDataFactory.criarOrdemServicoEmExecucao();
         when(iniciarExecucaoUseCase.executar(any())).thenReturn(os);
@@ -120,7 +120,7 @@ class OrdemServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve enviar OS para aguardar aprovaÃ§Ã£o")
+    @DisplayName("Deve enviar OS para aguardar aprovacao")
     void deveEnviarParaAguardarAprovacao() throws Exception {
         OrdemServico os = TestDataFactory.criarOrdemServicoAguardandoAprovacao();
         when(enviarAprovacaoUseCase.executar(any())).thenReturn(os);
@@ -131,7 +131,7 @@ class OrdemServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve voltar OS para diagnÃ³stico")
+    @DisplayName("Deve voltar OS para diagnostico")
     void deveVoltarDiagnostico() throws Exception {
         OrdemServico os = TestDataFactory.criarOrdemServicoEmDiagnostico();
         when(voltarDiagnosticoUseCase.executar(any())).thenReturn(os);
@@ -153,10 +153,10 @@ class OrdemServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve buscar tempo mÃ©dio dos serviÃ§os")
+    @DisplayName("Deve buscar tempo medio dos servicos")
     void deveBuscarTempoMedioDosServicos() throws Exception {
         TempoMedioOSResult result = new TempoMedioOSResult(
-                List.of(new TempoMedioServicoResult("Troca de Ã“leo", 3600.0)),
+                List.of(new TempoMedioServicoResult("Troca de oleo", 3600.0)),
                 3600.0
         );
         when(consultarTempoMedioUseCase.executar(any())).thenReturn(result);

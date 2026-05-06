@@ -68,7 +68,7 @@ class PecaControllerTest {
 
     @Test
     @WithMockUser(roles = "ALMOXARIFE")
-    @DisplayName("Deve alterar peÃ§a com role ALMOXARIFE")
+    @DisplayName("Deve alterar peca com role ALMOXARIFE")
     void deveAlterar_quandoAlmoxarife() throws Exception {
         Peca peca = TestDataFactory.criarPecaValida();
         when(alterarUseCase.executar(any(), anyString(), anyString(), any(), any(Integer.class))).thenReturn(peca);

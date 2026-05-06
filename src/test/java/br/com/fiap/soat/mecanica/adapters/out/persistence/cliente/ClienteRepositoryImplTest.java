@@ -75,7 +75,7 @@ class ClienteRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve buscar clientes por usuÃ¡rio ID")
+    @DisplayName("Deve buscar clientes por usuario ID")
     void deveBuscarPorUsuarioId() {
         UUID usuarioId = UUID.randomUUID();
         repository.salvar(new Cliente("Cliente 1", new CPF("52998224725"), null,

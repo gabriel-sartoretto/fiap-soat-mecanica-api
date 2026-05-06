@@ -103,7 +103,7 @@ class ClienteControllerTest {
 
     @Test
     @WithMockUser(roles = "ATENDENTE")
-    @DisplayName("Deve buscar clientes por usuÃ¡rio ID")
+    @DisplayName("Deve buscar clientes por usuario ID")
     void deveBuscarTodosPorUsuarioId() throws Exception {
         Cliente cliente = TestDataFactory.criarClienteComCpf();
         when(buscarUsuarioIdUseCase.executar(any())).thenReturn(List.of(cliente));

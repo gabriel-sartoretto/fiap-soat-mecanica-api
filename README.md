@@ -1,139 +1,353 @@
-# 🚗 FIAP SOAT - Mecânica API
+# FIAP SOAT - Mecanica API
 
-API desenvolvida para gerenciamento de uma oficina mecânica, 
-como parte do **Tech Challenge – Fase 1**.
+API REST desenvolvida para gerenciamento de uma oficina mecanica, como parte do
+**Tech Challenge - Fase 1**.
 
----
+## Problema
 
-## 📌 Problema
+O sistema foi idealizado para resolver dores comuns de oficinas mecanicas:
 
-O sistema foi idealizado para resolver dores comuns de oficinas:
+- Erros na priorizacao dos atendimentos
+- Falhas no controle de pecas e insumos
+- Dificuldade em acompanhar o status dos servicos
+- Perda de historico de clientes e veiculos
+- Ineficiencia no fluxo de orcamentos e ordens de servico
 
-* Erros na priorização dos atendimentos
-* Falhas no controle de peças e insumos
-* Dificuldade em acompanhar o status dos serviços
-* Perda de histórico de clientes e veículos
-* Ineficiência no fluxo de orçamentos
+## Tecnologias
 
----
+- Java 21
+- Spring Boot 3.5
+- Spring Web
+- Spring Data JPA
+- Spring Security
+- JWT
+- PostgreSQL 17
+- Flyway
+- Maven
+- Docker e Docker Compose
+- Swagger/OpenAPI
+- JUnit, Mockito, H2 e MockMvc
+- JaCoCo
+- SonarQube
+- GitHub Actions
 
-## 🧱 Tecnologias
+## Arquitetura
 
-* Java 21
-* Spring Boot 3
-* PostgreSQL 17
-* Flyway (migrations)
-* Docker
-* Maven
+O projeto segue uma organizacao inspirada em Clean Architecture e Arquitetura Hexagonal.
 
----
+```text
+src/main/java/br/com/fiap/soat/mecanica
+|-- domain                  -> regras de negocio, entidades, enums, value objects e portas
+|-- application             -> casos de uso da aplicacao
+|-- adapters
+|   |-- in/web              -> controllers, DTOs, mappers e filtro de seguranca
+|   `-- out
+|       |-- persistence     -> entidades JPA, repositories e mappers de persistencia
+|       `-- security        -> servicos de JWT e criptografia de senha
+`-- config                  -> seguranca, OpenAPI e tratamento global de excecoes
+```
 
-## ⚙️ Pré-requisitos
+## Principais dominios
+
+- **Usuario:** representa os usuarios autenticados da API.
+- **Cliente:** pessoa fisica ou juridica atendida pela oficina.
+- **Veiculo:** veiculo associado a um cliente.
+- **Servico:** tipo de servico executado pela oficina.
+- **Peca:** item de estoque utilizado nos servicos.
+- **Ordem de Servico:** entidade central do fluxo de atendimento.
+- **Prestacao de Servico:** servico incluido em uma ordem de servico.
+- **Alocacao de Peca:** reserva/uso de uma peca em uma prestacao de servico.
+
+## Fluxo da Ordem de Servico
+
+A Ordem de Servico controla o ciclo de vida do atendimento:
+
+```text
+RECEBIDA
+EM_DIAGNOSTICO
+AGUARDANDO_APROVACAO
+EM_EXECUCAO
+FINALIZADA
+ENTREGUE
+```
+
+Fluxo principal:
+
+1. O mecanico cria uma Ordem de Servico.
+2. O mecanico adiciona uma Prestacao de Servico.
+3. A OS sai de `RECEBIDA` para `EM_DIAGNOSTICO`.
+4. O almoxarife aloca pecas na prestacao.
+5. O sistema baixa estoque e soma o valor das pecas no total da OS.
+6. O mecanico envia a OS para aprovacao.
+7. O mecanico inicia a execucao.
+8. Ao finalizar todas as prestacoes, a OS passa para `FINALIZADA`.
+9. Ao pagar, a OS passa para `ENTREGUE`.
+
+## Perfis de acesso
+
+A API utiliza JWT e autorizacao por cargo.
+
+| Cargo | Responsabilidades principais |
+| --- | --- |
+| `ATENDENTE` | Cadastro e consulta de clientes e veiculos |
+| `MECANICO` | Cadastro de servicos, ordens de servico, prestacoes e fluxo da OS |
+| `ALMOXARIFE` | Cadastro de pecas e alocacao de pecas em prestacoes |
+
+Rotas publicas:
+
+- `POST /usuarios`
+- `POST /auth/login`
+- `GET /ordem-servicos/veiculo/placa/{placa}`
+- Swagger/OpenAPI
+
+As demais rotas exigem token JWT.
+
+## Pre-requisitos
 
 Antes de rodar o projeto, instale:
 
-* Java 21
-* Maven 3.9+
-* Docker + Docker Compose
+- Java 21
+- Maven 3.9+ ou use o Maven Wrapper do projeto
+- Docker
+- Docker Compose
 
----
+## Como rodar
 
-## 🚀 Como rodar o projeto
-
-### 🔹 1. Subir o banco de dados
-
-```bash
-docker-compose up -d
-```
-
-Isso irá subir um container PostgreSQL na porta **5432**.
-
----
-
-### 🔹 2. Build do projeto (opcional)
-
-Caso seja o primeiro uso ou queira validar o build:
+### 1. Subir somente o banco PostgreSQL
 
 ```bash
-mvn clean install
+docker-compose up -d postgres
 ```
 
----
+O PostgreSQL fica disponivel em:
 
-### 🔹 3. Rodar a aplicação
+```text
+localhost:5433
+```
+
+Configuracao local:
+
+```text
+database: mecanica
+username: postgres
+password: 1234567
+```
+
+### 2. Rodar a aplicacao localmente
+
+No Windows:
 
 ```bash
-mvn spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 
-ou
+No Linux/macOS:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
----
+A API ficara disponivel em:
 
-## 🔐 Autenticação
+```text
+http://localhost:8080
+```
 
-A API utiliza **JWT**.
+### 3. Subir tudo via Docker Compose
 
-### Fluxo:
+Este comando sobe a API, o PostgreSQL, o SonarQube e o banco do SonarQube:
 
-1. Criar usuário (`/usuario`)
-2. Fazer login (`/auth/login`)
-3. Receber token
-4. Enviar no header:
-5. Cada endpoint tem o Cargo autorizado entre os presentes ('ATENDENTE', 'MECANICO', 'ALMOXARIFE')
+```bash
+docker-compose up -d
+```
+
+Servicos principais:
+
+```text
+API:        http://localhost:8080
+PostgreSQL: localhost:5433
+SonarQube: http://localhost:9000
+```
+
+## Swagger
+
+Com a aplicacao rodando, acesse:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+O Swagger esta configurado com autenticacao Bearer JWT.
+
+## Autenticacao
+
+### Criar usuario
+
+```http
+POST /usuarios
+Content-Type: application/json
+```
+
+Exemplo:
+
+```json
+{
+  "nome": "Mecanico Teste",
+  "email": "mecanico@email.com",
+  "senha": "Senha@123",
+  "cargoEnum": "MECANICO"
+}
+```
+
+### Fazer login
+
+```http
+POST /auth/login
+Content-Type: application/json
+```
+
+Exemplo:
+
+```json
+{
+  "email": "mecanico@email.com",
+  "senha": "Senha@123"
+}
+```
+
+### Usar o token
+
+Envie o token retornado no header:
 
 ```http
 Authorization: Bearer SEU_TOKEN
 ```
 
----
+## Usuarios mockados
 
-## 📖 Documentação (Swagger)
+A migration `V9__mock_dados.sql` cria usuarios para facilitar testes manuais.
 
-Após subir a aplicação:
+| Cargo | Email | Senha |
+| --- | --- | --- |
+| `ATENDENTE` | `atendente@mecanica.test` | `Senha@123` |
+| `MECANICO` | `mecanico@mecanica.test` | `Senha@123` |
+| `ALMOXARIFE` | `almoxarife@mecanica.test` | `Senha@123` |
 
-👉 http://localhost:8080/swagger-ui.html
+## Banco de dados
 
----
+O banco e versionado com Flyway em:
 
-## 📂 Estrutura do projeto
-
+```text
+src/main/resources/db/migration
 ```
-domain        → regras de negócio (entidades, value objects)
-application   → casos de uso
-adapters      → controllers, repositorios
-infra         → banco (JPA), segurança
-```
 
----
+Principais tabelas:
 
-## 🧪 Rodar testes
+- `usuarios`
+- `clientes`
+- `veiculos`
+- `pecas`
+- `servicos`
+- `ordem_servicos`
+- `prestacao_servicos`
+- `alocacao_pecas`
+
+## Testes
+
+Rodar testes:
 
 ```bash
-mvn test
+./mvnw.cmd test
 ```
 
----
+No Linux/macOS:
 
-## 🛠️ Padrões utilizados
+```bash
+./mvnw test
+```
 
-* Clean Architecture - Arquitetura Hexagonal
-* SOLID
-* Value Objects para validações (CPF, CNPJ, Email, Placa, Telefone)
-* Separação Domain vs Entity (JPA)
+Rodar verificacao completa com JaCoCo:
 
----
+```bash
+./mvnw.cmd clean verify
+```
 
-## 👨‍💻 Autor
+O projeto possui testes para:
 
-Projeto desenvolvido para o Tech Challenge FIAP.
+- Entidades de dominio
+- Value Objects
+- Casos de uso
+- Controllers
+- Mappers
+- Repositories
+- Seguranca/JWT
+- Tratamento global de excecoes
 
----
+O relatorio de cobertura fica em:
 
-## 📄 Licença
+```text
+target/site/jacoco/index.html
+```
 
-Uso educacional.
+Atualmente, o projeto exige cobertura minima de **80%** no `mvn verify`.
+
+## Smoke test da API
+
+Existe um script de smoke test em:
+
+```text
+tests/api-smoke/api-smoke.mjs
+```
+
+Com a aplicacao rodando:
+
+```bash
+node tests/api-smoke/api-smoke.mjs
+```
+
+Tambem e possivel apontar para outra URL:
+
+```bash
+API_BASE_URL=http://localhost:8080 node tests/api-smoke/api-smoke.mjs
+```
+
+## Analise de seguranca com OWASP ZAP
+
+O projeto pode ser analisado com OWASP ZAP para verificacao dinamica de
+vulnerabilidades na API em execucao.
+
+Com a aplicacao rodando em `http://localhost:8080`, execute:
+
+```bash
+docker run -t owasp/zap2docker-stable zap-baseline.py -t http://host.docker.internal:8080 -r zap-report.html
+```
+
+Caso o comando seja executado em Linux, pode ser necessario usar o IP da maquina
+host no lugar de `host.docker.internal`.
+
+## CI
+
+O projeto possui pipeline no GitHub Actions em:
+
+```text
+.github/workflows/ci.yml
+```
+
+A pipeline executa:
+
+- Checkout do repositorio
+- Setup do JDK 21
+- `./mvnw clean verify`
+- Analise SonarQube quando `SONAR_TOKEN` e `SONAR_HOST_URL` estiverem configurados
+
+## Padroes utilizados
+
+- Clean Architecture
+- Arquitetura Hexagonal
+- SOLID
+- Separacao entre dominio e persistencia JPA
+- Value Objects para validacoes de CPF, CNPJ, Email, Placa, Senha e Telefone
+- Repositories como portas do dominio
+- Use cases para orquestracao das regras de aplicacao
+- DTOs e mappers nos adapters de entrada e saida
+- Tratamento global de excecoes

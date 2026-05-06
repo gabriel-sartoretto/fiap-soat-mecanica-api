@@ -32,7 +32,7 @@ class BuscarTodosOrdemServicoPorVeiculoPlacaUseCaseTest {
     private BuscarTodosOrdemServicoPorVeiculoPlacaUseCase useCase;
 
     @Test
-    @DisplayName("Deve buscar ordens de serviÃ§o por placa do veÃ­culo")
+    @DisplayName("Deve buscar ordens de servico por placa do veiculo")
     void deveBuscarOrdensPorPlaca() {
         Veiculo veiculo = TestDataFactory.criarVeiculoValido();
         OrdemServico ordemServico = TestDataFactory.criarOrdemServicoRecebida();
@@ -45,7 +45,7 @@ class BuscarTodosOrdemServicoPorVeiculoPlacaUseCaseTest {
     }
 
     @Test
-    @DisplayName("Deve lanÃ§ar exceÃ§Ã£o quando veÃ­culo nÃ£o existe")
+    @DisplayName("Deve lancar excecao quando veiculo nao existe")
     void deveLancarExcecao_quandoVeiculoNaoExiste() {
         when(veiculoRepository.buscarPorPlaca(any())).thenReturn(Optional.empty());
 

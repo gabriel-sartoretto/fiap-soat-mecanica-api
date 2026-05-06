@@ -30,10 +30,10 @@ class PrestacaoServicoRepositoryImplUnitTest {
     private PrestacaoServicoRepositoryImpl repository;
 
     @Test
-    @DisplayName("Deve calcular tempo mÃ©dio por serviÃ§os")
+    @DisplayName("Deve calcular tempo medio por servicos")
     void deveCalcularTempoMedioPorServicos() {
         UUID servicoId = UUID.randomUUID();
-        when(projection.getNomeServico()).thenReturn("Troca de Ã“leo");
+        when(projection.getNomeServico()).thenReturn("Troca de óleo");
         when(projection.getTempoMedioSegundos()).thenReturn(3600.0);
         when(prestacaoServicoJpaRepository.calcularTempoMedioPorServicos(Set.of(servicoId)))
                 .thenReturn(List.of(projection));
@@ -41,7 +41,7 @@ class PrestacaoServicoRepositoryImplUnitTest {
         List<TempoMedioServicoResult> resultado = repository.calcularTempoMedioPorServicos(Set.of(servicoId));
 
         assertThat(resultado).hasSize(1);
-        assertThat(resultado.get(0).nomeServico()).isEqualTo("Troca de Ã“leo");
+        assertThat(resultado.get(0).nomeServico()).isEqualTo("Troca de oleo");
         assertThat(resultado.get(0).tempoMedioSegundos()).isEqualTo(3600.0);
     }
 }

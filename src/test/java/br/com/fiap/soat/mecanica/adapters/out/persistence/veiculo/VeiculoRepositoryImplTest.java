@@ -58,7 +58,7 @@ class VeiculoRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve buscar veÃ­culo por ID")
+    @DisplayName("Deve buscar veiculo por ID")
     void deveBuscarPorId() {
         Veiculo veiculo = new Veiculo(new Placa("ABC1234"), "Toyota", "Corolla", "2023", 2, UUID.randomUUID());
         Veiculo salvo = repository.salvar(veiculo);

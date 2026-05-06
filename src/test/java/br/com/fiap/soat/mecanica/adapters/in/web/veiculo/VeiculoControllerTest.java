@@ -75,7 +75,7 @@ class VeiculoControllerTest {
 
     @Test
     @WithMockUser(roles = "ATENDENTE")
-    @DisplayName("Deve buscar veÃ­culo por ID")
+    @DisplayName("Deve buscar veiculo por ID")
     void deveBuscarPorId() throws Exception {
         Veiculo veiculo = TestDataFactory.criarVeiculoValido();
         when(buscarPorIdUseCase.executar(any())).thenReturn(veiculo);
@@ -86,7 +86,7 @@ class VeiculoControllerTest {
 
     @Test
     @WithMockUser(roles = "ATENDENTE")
-    @DisplayName("Deve buscar veÃ­culos por cliente ID")
+    @DisplayName("Deve buscar veiculos por cliente ID")
     void deveBuscarPorClienteId() throws Exception {
         Veiculo veiculo = TestDataFactory.criarVeiculoValido();
         when(buscarTodosPorClienteUseCase.executar(any())).thenReturn(List.of(veiculo));

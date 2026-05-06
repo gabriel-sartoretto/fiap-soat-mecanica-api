@@ -57,7 +57,7 @@ class AlocacaoPecaControllerTest {
 
     @Test
     @WithMockUser(roles = "ALMOXARIFE")
-    @DisplayName("Deve inativar alocaÃ§Ã£o com role ALMOXARIFE")
+    @DisplayName("Deve inativar alocacao com role ALMOXARIFE")
     void deveInativar_quandoAlmoxarife() throws Exception {
         AlocacaoPeca al = TestDataFactory.criarAlocacaoPecaInativa();
         when(inativarUseCase.executar(any())).thenReturn(al);

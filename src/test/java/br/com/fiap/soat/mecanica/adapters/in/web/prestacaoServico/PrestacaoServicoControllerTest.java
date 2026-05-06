@@ -72,7 +72,7 @@ class PrestacaoServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve inativar prestaÃ§Ã£o de serviÃ§o")
+    @DisplayName("Deve inativar prestacao de servico")
     void deveInativar() throws Exception {
         PrestacaoServico ps = TestDataFactory.criarPrestacaoServicoInativa();
         when(inativarUseCase.executar(any())).thenReturn(ps);
@@ -83,7 +83,7 @@ class PrestacaoServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve finalizar prestaÃ§Ã£o de serviÃ§o")
+    @DisplayName("Deve finalizar prestacao de servico")
     void deveFinalizar() throws Exception {
         PrestacaoServico ps = TestDataFactory.criarPrestacaoServicoFinalizada();
         when(finalizarUseCase.executar(any())).thenReturn(ps);

@@ -59,13 +59,13 @@ class ServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve alterar serviÃ§o")
+    @DisplayName("Deve alterar servico")
     void deveAlterar() throws Exception {
         Servico servico = TestDataFactory.criarServicoValido();
         when(alterarUseCase.executar(any(), anyString(), anyString())).thenReturn(servico);
 
         String json = """
-                {"nome":"Troca de Ã“leo","descricao":"DescriÃ§Ã£o alterada"}
+                {"nome":"Troca de oleo","descricao":"Descricao alterada"}
                 """;
 
         mockMvc.perform(put("/servicos/{id}", servico.getId())
@@ -76,7 +76,7 @@ class ServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve ativar serviÃ§o")
+    @DisplayName("Deve ativar servico")
     void deveAtivar() throws Exception {
         Servico servico = TestDataFactory.criarServicoValido();
         when(ativarUseCase.executar(any())).thenReturn(servico);
@@ -87,7 +87,7 @@ class ServicoControllerTest {
 
     @Test
     @WithMockUser(roles = "MECANICO")
-    @DisplayName("Deve inativar serviÃ§o")
+    @DisplayName("Deve inativar servico")
     void deveInativar() throws Exception {
         Servico servico = TestDataFactory.criarServicoValido();
         when(inativarUseCase.executar(any())).thenReturn(servico);

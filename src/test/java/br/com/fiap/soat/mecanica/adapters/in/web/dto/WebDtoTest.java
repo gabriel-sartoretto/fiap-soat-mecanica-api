@@ -22,7 +22,7 @@ class WebDtoTest {
     }
 
     @Test
-    @DisplayName("Deve criar request de alteraÃ§Ã£o de cliente")
+    @DisplayName("Deve criar request de alteracao de cliente")
     void deveCriarClienteAlterarRequest() {
         ClienteAlterarRequest request = new ClienteAlterarRequest("Cliente", "11999887766");
 
@@ -31,7 +31,7 @@ class WebDtoTest {
     }
 
     @Test
-    @DisplayName("Deve criar request de atualizaÃ§Ã£o de peÃ§a")
+    @DisplayName("Deve criar request de atualizacao de peca")
     void deveCriarPecaAtualizarRequest() {
         PecaAtualizarRequest request = new PecaAtualizarRequest(
                 "Pastilha",
@@ -47,11 +47,11 @@ class WebDtoTest {
     }
 
     @Test
-    @DisplayName("Deve criar request de alteraÃ§Ã£o de serviÃ§o")
+    @DisplayName("Deve criar request de alteracao de servico")
     void deveCriarServicoAlterarRequest() {
-        ServicoAlterarRequest request = new ServicoAlterarRequest("Troca de Ã“leo", "DescriÃ§Ã£o");
+        ServicoAlterarRequest request = new ServicoAlterarRequest("Troca de oleo", "Descricao");
 
-        assertThat(request.nome()).isEqualTo("Troca de Ã“leo");
-        assertThat(request.descricao()).isEqualTo("DescriÃ§Ã£o");
+        assertThat(request.nome()).isEqualTo("Troca de oleo");
+        assertThat(request.descricao()).isEqualTo("Descricao");
     }
 }

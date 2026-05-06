@@ -22,7 +22,7 @@ public class JwtService {
         );
     }
 
-    // 🔐 gerar token
+    // gerar token
     public String gerarToken(String email) {
         return Jwts.builder()
                 .subject(email)
@@ -32,23 +32,23 @@ public class JwtService {
                 .compact();
     }
 
-    // 📥 extrair username (email)
+    // extrair username (email)
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    // ✅ validar token
+    // validar token
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    // ⏳ verificar expiração
+    // verificar expiração
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
-    // 📦 extrair claims
+    // extrair claims
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith((SecretKey) key)
