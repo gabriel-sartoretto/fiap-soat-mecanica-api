@@ -65,6 +65,7 @@ public class PrestacaoServicoController {
 
     @PatchMapping("/{id}/finalizar")
     @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Finalizar Prestação de Serviço por Id")
     public ResponseEntity<PrestacaoServicoResponse> finalizar(@PathVariable UUID id) {
 
         PrestacaoServico ps = finalizarPrestacaoServicoUseCase.executar(id);

@@ -11,9 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
@@ -159,6 +162,51 @@ public class GlobalExceptionHandler {
                         "Valor enviado incorretamente",
                         null,
                         null,
+                        null
+                )
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        log.warn("Parametro invalido: {}={}", ex.getName(), ex.getValue());
+        return ResponseEntity.badRequest().body(
+                new ErrorResponse(
+                        400,
+                        "Bad Request",
+                        "Parametro enviado em formato invalido",
+                        ex.getName(),
+                        ex.getValue(),
+                        null
+                )
+        );
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        log.warn("Metodo HTTP nao suportado: {}", ex.getMethod());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(
+                new ErrorResponse(
+                        405,
+                        "Method Not Allowed",
+                        "Metodo HTTP nao suportado para este recurso",
+                        null,
+                        ex.getMethod(),
+                        null
+                )
+        );
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex) {
+        log.warn("Recurso inexistente: {}", ex.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ErrorResponse(
+                        404,
+                        "Not Found",
+                        "Recurso nao encontrado",
+                        null,
+                        ex.getResourcePath(),
                         null
                 )
         );

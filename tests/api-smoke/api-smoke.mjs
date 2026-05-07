@@ -154,12 +154,12 @@ async function login(label, credential) {
     throw new Error(`Login falhou para ${label}. Verifique se a aplicacao esta rodando e se a V9 foi aplicada.`);
   }
 
-  if (!result.body?.token) {
+  if (!result.body?.jwt) {
     fail(`AUTH - token ${label}`, "body.token preenchido", "body.token ausente", result.body);
     throw new Error(`Token ausente para ${label}.`);
   }
 
-  return result.body.token;
+  return result.body.jwt;
 }
 
 function onlyDigits(value) {

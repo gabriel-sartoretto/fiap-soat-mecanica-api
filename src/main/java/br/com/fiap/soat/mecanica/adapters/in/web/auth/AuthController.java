@@ -4,6 +4,7 @@ import br.com.fiap.soat.mecanica.adapters.in.web.auth.dto.LoginRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.auth.dto.LoginResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.auth.mapper.AuthResponseMapper;
 import br.com.fiap.soat.mecanica.application.usuario.usecase.AutenticarUsuarioUseCase;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class AuthController {
     private final AutenticarUsuarioUseCase autenticarUsuarioUseCase;
 
     @PostMapping("/login")
+    @Operation(summary = "Login na API usando email e senha")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
         String token = autenticarUsuarioUseCase.login(request.email(), request.senha());

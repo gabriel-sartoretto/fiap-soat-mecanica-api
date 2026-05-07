@@ -29,6 +29,7 @@ O sistema foi idealizado para resolver dores comuns de oficinas mecanicas:
 - JUnit, Mockito, H2 e MockMvc
 - JaCoCo
 - SonarQube
+- ZAP by Checkmarx
 - GitHub Actions
 
 ## Arquitetura
@@ -185,6 +186,37 @@ SonarQube: http://localhost:9000
 Neste modo, a API ja fica disponivel em `http://localhost:8080` pelo container
 `mecanica-api`. Nao e necessario iniciar a aplicacao pela IDE/Maven.
 
+### 4. Subir somente o SonarQube
+
+Use este modo quando a aplicacao ja estiver rodando localmente pela IDE/Maven e
+voce quiser subir apenas o SonarQube e o banco dele:
+
+```bash
+docker-compose up -d sonarqube
+```
+
+O SonarQube fica disponivel em:
+
+```text
+http://localhost:9000
+```
+
+Na primeira execucao, aguarde alguns instantes ate o servico finalizar a
+inicializacao. O login inicial padrao e:
+
+```text
+usuario: admin
+senha: admin
+```
+
+Para verificar o status do SonarQube:
+
+```text
+http://localhost:9000/api/system/status
+```
+
+Quando o retorno indicar `status: UP`, a interface ja pode ser acessada.
+
 ## Swagger
 
 Com a aplicacao rodando, acesse:
@@ -318,7 +350,7 @@ tests/api-smoke/api-smoke.mjs
 Com a aplicacao rodando:
 
 ```bash
-node tests/api-smoke/api-smoke.mjs
+node .\tests\api-smoke\api-smoke.mjs
 ```
 
 Tambem e possivel apontar para outra URL:
@@ -327,19 +359,19 @@ Tambem e possivel apontar para outra URL:
 API_BASE_URL=http://localhost:8080 node tests/api-smoke/api-smoke.mjs
 ```
 
-## Analise de seguranca com OWASP ZAP
+## Analise de seguranca com ZAP by Checkmarx
 
-O projeto pode ser analisado com OWASP ZAP para verificacao dinamica de
-vulnerabilidades na API em execucao.
+O projeto pode ser analisado com o ZAP by Checkmarx instalado localmente para
+verificacao dinamica de vulnerabilidades na API em execucao.
 
-Com a aplicacao rodando em `http://localhost:8080`, execute:
+Com a aplicacao rodando, configure o alvo no aplicativo:
 
-```bash
-docker run -t owasp/zap2docker-stable zap-baseline.py -t http://host.docker.internal:8080 -r zap-report.html
+```text
+http://localhost:8080
 ```
 
-Caso o comando seja executado em Linux, pode ser necessario usar o IP da maquina
-host no lugar de `host.docker.internal`.
+Porém para que seja possível acessar Endpoints autorizados, é nesserario acessar com um token JWT no header.
+A maioria dos Endpoint possui um PreAuthorize especificando qual Cargo tem acesso.
 
 ## CI
 
