@@ -1,6 +1,6 @@
 # 📝 Documentação do Banco de Dados - Figma
 
-Documentação do banco de dados contemplando os principais fluxos da Oficina Mecânica:
+Documentação do banco de dados contemplando os principais fluxos da Oficina Mecânica do Braia:
 
 - Escolha de relacionamento e organização entre tabela
 

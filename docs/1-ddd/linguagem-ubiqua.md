@@ -1,4 +1,4 @@
-# 📋 Glossário de Domínio: Oficina Mecânica
+# 📋 Glossário de Domínio: Oficina Mecânica do Braia
 
 - **Veículo:** O bem móvel de propriedade ou sob responsabilidade do cliente que é o objeto da prestação de serviço de manutenção ou reparo.
 

@@ -1,4 +1,4 @@
-# FIAP SOAT - Mecanica API
+# FIAP SOAT - Mecanica do Braia
 
 API REST desenvolvida para gerenciamento de uma oficina mecanica, como parte do
 **Tech Challenge - Fase 1**.
