@@ -26,7 +26,7 @@ class PecaRepositoryImplTest extends PostgresIntegrationTest {
     private PecaRepositoryImpl repository;
 
     @Test
-    @DisplayName("Deve salvar e buscar peca por ID")
+    @DisplayName("Deve salvar e buscar peça por ID")
     void deveSalvarEBuscarPorId() {
         Peca peca = new Peca("Pastilha", "Bosch", new BigDecimal("150.00"), 10);
 
@@ -38,7 +38,7 @@ class PecaRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar peca por nome")
+    @DisplayName("Deve buscar peça por nome")
     void deveBuscarPorNome() {
         Peca peca = new Peca("Disco Freio", "Fremax", new BigDecimal("200.00"), 5);
         repository.salvar(peca);

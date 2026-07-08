@@ -302,12 +302,12 @@ Principais tabelas:
 
 ## Melhorias de Infraestrutura e Testes
 
-- **Dockerfile multi-stage:** a imagem agora compila a aplicacao em um stage com Maven e JDK e copia apenas o `.jar` gerado para uma imagem runtime menor com JRE. O build Docker e autocontido e nao depende de um artefato gerado localmente.
-- **Usuario nao-root:** o stage final cria usuario e grupo dedicados para a aplicacao, copia o artefato com permissao adequada e executa o processo Java com `USER mecanica`.
-- **Healthcheck do banco:** o PostgreSQL no Docker Compose usa `pg_isready` para indicar quando o banco esta pronto para conexoes.
-- **Ordem de subida no Compose:** a aplicacao depende do PostgreSQL com `condition: service_healthy`, evitando tentativas de conexao antes do banco estar saudavel.
-- **Testcontainers nos testes de integracao:** os testes JPA e de contexto sobem PostgreSQL real com Testcontainers e injetam dinamicamente `spring.datasource.url`, `spring.datasource.username`, `spring.datasource.password` e `spring.datasource.driver-class-name`.
-- **Banco real nos testes:** Flyway, Hibernate/JPA e repositories sao validados contra PostgreSQL, mantendo os testes unitarios independentes de container.
+- **Dockerfile multi-stage:** a imagem agora compila a aplicação em um stage com Maven e JDK e copia apenas o `.jar` gerado para uma imagem runtime menor com JRE. O build Docker e autocontido e não depende de um artefato gerado localmente.
+- **Usuario nao-root:** o stage final cria usuário e grupo dedicados para a aplicação, copia o artefato com permissão adequada e executa o processo Java com `USER mecanica`.
+- **Healthcheck do banco:** o PostgreSQL no Docker Compose usa `pg_isready` para indicar quando o banco está pronto para conexões.
+- **Ordem de subida no Compose:** a aplicação depende do PostgreSQL com `condition: service_healthy`, evitando tentativas de conexão antes do banco estar saudável.
+- **Testcontainers nos testes de integracao:** os testes JPA e de contexto sobem PostgreSQL real com Testcontainers e injetam dinâmicamente `spring.datasource.url`, `spring.datasource.username`, `spring.datasource.password` e `spring.datasource.driver-class-name`.
+- **Banco real nos testes:** Flyway, Hibernate/JPA e repositories são validados contra PostgreSQL, mantendo os testes unitários independentes de container.
 
 ## Testes
 
@@ -323,9 +323,9 @@ No Linux/macOS:
 ./mvnw test
 ```
 
-> Os testes de integracao usam Testcontainers. Mantenha o Docker em execucao antes de rodar a suite completa.
+> Os testes de integração usam Testcontainers. Mantenha o Docker em execução antes de rodar a suíte completa.
 
-Rodar verificacao completa com JaCoCo:
+Rodar verificação completa com JaCoCo:
 
 ```bash
 ./mvnw.cmd clean verify

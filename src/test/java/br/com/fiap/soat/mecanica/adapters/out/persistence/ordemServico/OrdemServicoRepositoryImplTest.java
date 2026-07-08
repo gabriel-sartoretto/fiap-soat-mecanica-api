@@ -56,7 +56,7 @@ class OrdemServicoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todas OS por veiculo ID")
+    @DisplayName("Deve buscar todas OS por veículo ID")
     void deveBuscarTodosPorVeiculoId() {
         repository.salvar(new OrdemServico("OS 1", veiculoId, usuarioId));
         repository.salvar(new OrdemServico("OS 2", veiculoId, usuarioId));

@@ -35,7 +35,7 @@ class UsuarioRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve salvar e buscar usuario por email")
+    @DisplayName("Deve salvar e buscar usuário por email")
     void deveSalvarEBuscarPorEmail() {
         Usuario salvo = repository.salvar(usuario);
         Optional<Usuario> encontrado = repository.buscarPorEmail("mecanico@test.com");
@@ -46,7 +46,7 @@ class UsuarioRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar vazio quando email nao existe")
+    @DisplayName("Deve retornar vazio quando email não existe")
     void deveRetornarVazio_quandoEmailNaoExiste() {
         Optional<Usuario> encontrado = repository.buscarPorEmail("inexistente@test.com");
 

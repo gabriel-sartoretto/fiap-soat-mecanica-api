@@ -43,7 +43,7 @@ class AlocacaoPecaRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve salvar e buscar alocacao por ID")
+    @DisplayName("Deve salvar e buscar alocação por ID")
     void deveSalvarEBuscarPorId() {
         AlocacaoPeca alocacao = new AlocacaoPeca(2, prestacaoServicoId, pecaId);
 
@@ -55,7 +55,7 @@ class AlocacaoPecaRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve verificar alocacao ativa por prestacao e peca")
+    @DisplayName("Deve verificar alocação ativa por prestação e peça")
     void deveVerificarExistenciaPorPrestacaoServicoEPeca() {
         repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, pecaId));
 
@@ -63,7 +63,7 @@ class AlocacaoPecaRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todas alocacoes por prestacao de servico")
+    @DisplayName("Deve buscar todas as alocações por prestação de serviço")
     void deveBuscarTodosPorPrestacaoServicoId() {
         UUID outraPecaId = DatabaseTestFixtures.insertPeca(jdbcTemplate);
         repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, pecaId));
@@ -73,7 +73,7 @@ class AlocacaoPecaRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Nao deve considerar alocacao inativa como existente")
+    @DisplayName("Não deve considerar alocação inativa como existente")
     void naoDeveConsiderarAlocacaoInativaComoExistente() {
         AlocacaoPeca inativa = repository.salvar(new AlocacaoPeca(2, prestacaoServicoId, pecaId));
         inativa.inativar();

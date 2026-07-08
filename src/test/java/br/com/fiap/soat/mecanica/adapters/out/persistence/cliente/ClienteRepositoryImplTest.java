@@ -43,7 +43,7 @@ class ClienteRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar vazio quando CPF nao existe")
+    @DisplayName("Deve retornar vazio quando CPF não existe")
     void deveRetornarVazio_quandoCpfNaoExiste() {
         assertThat(repository.buscarPorCpf(new CPF("12345678909"))).isEmpty();
     }
@@ -75,7 +75,7 @@ class ClienteRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar clientes por usuario ID")
+    @DisplayName("Deve buscar clientes por usuário ID")
     void deveBuscarPorUsuarioId() {
         UUID usuarioId = UUID.randomUUID();
         repository.salvar(new Cliente("Cliente 1", new CPF("11144477735"), null,

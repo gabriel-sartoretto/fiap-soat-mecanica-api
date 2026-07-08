@@ -41,7 +41,7 @@ class VeiculoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve salvar e buscar veiculo por placa")
+    @DisplayName("Deve salvar e buscar veículo por placa")
     void deveSalvarEBuscarPorPlaca() {
         Veiculo veiculo = new Veiculo(new Placa("ABC1234"), "Toyota", "Corolla", "2023", 2, clienteId);
 
@@ -53,7 +53,7 @@ class VeiculoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todos veiculos por cliente ID")
+    @DisplayName("Deve buscar todos veículos por cliente ID")
     void deveBuscarTodosPorClienteId() {
         Veiculo v1 = new Veiculo(new Placa("ABC1234"), "Toyota", "Corolla", "2023", 2, clienteId);
         Veiculo v2 = new Veiculo(new Placa("DEF5G67"), "Honda", "Civic", "2022", 2, clienteId);
@@ -66,7 +66,7 @@ class VeiculoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar veiculo por ID")
+    @DisplayName("Deve buscar veículo por ID")
     void deveBuscarPorId() {
         Veiculo veiculo = new Veiculo(new Placa("ABC1234"), "Toyota", "Corolla", "2023", 2, clienteId);
         Veiculo salvo = repository.salvar(veiculo);

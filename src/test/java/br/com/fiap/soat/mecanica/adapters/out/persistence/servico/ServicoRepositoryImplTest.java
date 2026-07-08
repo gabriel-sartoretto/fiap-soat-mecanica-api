@@ -25,19 +25,19 @@ class ServicoRepositoryImplTest extends PostgresIntegrationTest {
     private ServicoRepositoryImpl repository;
 
     @Test
-    @DisplayName("Deve salvar e buscar servico por ID")
+    @DisplayName("Deve salvar e buscar serviço por ID")
     void deveSalvarEBuscarPorId() {
-        Servico servico = new Servico("Troca de Oleo", "Desc");
+        Servico servico = new Servico("Troca de Óleo", "Desc");
 
         Servico salvo = repository.salvar(servico);
         Optional<Servico> encontrado = repository.buscarPorId(salvo.getId());
 
         assertThat(encontrado).isPresent();
-        assertThat(encontrado.get().getNome()).isEqualTo("Troca de Oleo");
+        assertThat(encontrado.get().getNome()).isEqualTo("Troca de Óleo");
     }
 
     @Test
-    @DisplayName("Deve buscar servico por nome")
+    @DisplayName("Deve buscar serviço por nome")
     void deveBuscarPorNome() {
         Servico servico = new Servico("Balanceamento", "Desc");
         repository.salvar(servico);

@@ -45,7 +45,7 @@ class PrestacaoServicoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve salvar e buscar prestacao por ID")
+    @DisplayName("Deve salvar e buscar prestação por ID")
     void deveSalvarEBuscarPorId() {
         PrestacaoServico ps = new PrestacaoServico(new BigDecimal("200"), ordemServicoId, servicoId);
 
@@ -56,7 +56,7 @@ class PrestacaoServicoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todas prestacoes por OS ID")
+    @DisplayName("Deve buscar todas as prestações por OS ID")
     void deveBuscarTodosPorOsId() {
         UUID outroServicoId = DatabaseTestFixtures.insertServico(jdbcTemplate);
         repository.salvar(new PrestacaoServico(new BigDecimal("100"), ordemServicoId, servicoId));
@@ -68,7 +68,7 @@ class PrestacaoServicoRepositoryImplTest extends PostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve verificar existencia por OS ID e servico ID")
+    @DisplayName("Deve verificar existência por OS ID e serviço ID")
     void deveVerificarExistenciaPorOsIdEServicoId() {
         repository.salvar(new PrestacaoServico(new BigDecimal("100"), ordemServicoId, servicoId));
 
