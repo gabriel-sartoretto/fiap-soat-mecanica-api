@@ -26,7 +26,7 @@ O sistema foi idealizado para resolver dores comuns de oficinas mecanicas:
 - Maven
 - Docker e Docker Compose
 - Swagger/OpenAPI
-- JUnit, Mockito, H2 e MockMvc
+- JUnit, Mockito, Testcontainers e MockMvc
 - JaCoCo
 - SonarQube
 - ZAP by Checkmarx
@@ -300,6 +300,15 @@ Principais tabelas:
 - `prestacao_servicos`
 - `alocacao_pecas`
 
+## Melhorias de Infraestrutura e Testes
+
+- **Dockerfile multi-stage:** a imagem agora compila a aplicação em um stage com Maven e JDK e copia apenas o `.jar` gerado para uma imagem runtime menor com JRE. O build Docker e autocontido e não depende de um artefato gerado localmente.
+- **Usuario nao-root:** o stage final cria usuário e grupo dedicados para a aplicação, copia o artefato com permissão adequada e executa o processo Java com `USER mecanica`.
+- **Healthcheck do banco:** o PostgreSQL no Docker Compose usa `pg_isready` para indicar quando o banco está pronto para conexões.
+- **Ordem de subida no Compose:** a aplicação depende do PostgreSQL com `condition: service_healthy`, evitando tentativas de conexão antes do banco estar saudável.
+- **Testcontainers nos testes de integracao:** os testes JPA e de contexto sobem PostgreSQL real com Testcontainers e injetam dinâmicamente `spring.datasource.url`, `spring.datasource.username`, `spring.datasource.password` e `spring.datasource.driver-class-name`.
+- **Banco real nos testes:** Flyway, Hibernate/JPA e repositories são validados contra PostgreSQL, mantendo os testes unitários independentes de container.
+
 ## Testes
 
 Rodar testes:
@@ -314,7 +323,9 @@ No Linux/macOS:
 ./mvnw test
 ```
 
-Rodar verificacao completa com JaCoCo:
+> Os testes de integração usam Testcontainers. Mantenha o Docker em execução antes de rodar a suíte completa.
+
+Rodar verificação completa com JaCoCo:
 
 ```bash
 ./mvnw.cmd clean verify
