@@ -25,8 +25,10 @@ O sistema foi idealizado para resolver dores comuns de oficinas mecanicas:
 - Flyway
 - Maven
 - Docker e Docker Compose
+- Kubernetes
+- Spring Boot Actuator
 - Swagger/OpenAPI
-- JUnit, Mockito, H2 e MockMvc
+- JUnit, Mockito, Testcontainers e MockMvc
 - JaCoCo
 - SonarQube
 - ZAP by Checkmarx
@@ -217,6 +219,104 @@ http://localhost:9000/api/system/status
 
 Quando o retorno indicar `status: UP`, a interface ja pode ser acessada.
 
+## Kubernetes
+
+Alem do Docker Compose, o projeto tambem pode ser executado em um cluster
+Kubernetes local. Os manifestos ficam em:
+
+```text
+k8s/
+```
+
+### Componentes
+
+| Arquivo | Recurso | Descricao |
+| --- | --- | --- |
+| `postgres-secret.yaml` | Secret | Credenciais do banco (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) |
+| `postgres-pvc.yaml` | PersistentVolumeClaim | Armazenamento persistente dos dados do Postgres |
+| `postgres-deployment.yaml` | Deployment | Sobe o container do PostgreSQL, montando o PVC |
+| `postgres-service.yaml` | Service (ClusterIP) | Expõe o Postgres dentro do cluster no host `mecanica-db` |
+| `api-configmap.yaml` | ConfigMap | Configuracao nao sensivel da API (URL JDBC) |
+| `api-secret.yaml` | Secret | Credenciais sensiveis da API (usuario/senha do banco, `JWT_SECRET`) |
+| `api-deployment.yaml` | Deployment | Sobe os Pods da API, com probes de liveness/readiness |
+| `api-service.yaml` | Service (LoadBalancer) | Expõe a API fora do cluster, em `localhost:8080` |
+| `api-hpa.yaml` | HorizontalPodAutoscaler | Escala a API entre 2 e 5 réplicas com base em CPU/memória |
+
+### Pre-requisitos
+
+- Docker Desktop com Kubernetes habilitado (`Settings > Kubernetes > Enable Kubernetes`)
+- `kubectl` (instalado automaticamente junto com o Docker Desktop)
+
+### Como rodar
+
+1. Build da imagem usada pelos manifestos:
+
+```bash
+docker build -t mecanica-api:local .
+```
+
+2. Subir o PostgreSQL:
+
+```bash
+kubectl apply -f k8s/postgres-secret.yaml -f k8s/postgres-pvc.yaml -f k8s/postgres-deployment.yaml -f k8s/postgres-service.yaml
+```
+
+3. Aguardar o pod do banco ficar pronto:
+
+```bash
+kubectl get pods
+```
+
+4. Subir a API:
+
+```bash
+kubectl apply -f k8s/api-configmap.yaml -f k8s/api-secret.yaml -f k8s/api-deployment.yaml -f k8s/api-service.yaml -f k8s/api-hpa.yaml
+```
+
+5. Instalar o `metrics-server` (necessario para o HPA calcular uso de CPU/memória):
+
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+
+> Em cluster local (Docker Desktop, minikube, kind), o `metrics-server` nao
+> confia por padrao no certificado do kubelet. Baixe o `components.yaml`,
+> adicione o argumento `--kubelet-insecure-tls` na lista de `args` do
+> Deployment `metrics-server`, e aplique o arquivo local em vez da URL.
+
+### Acessando a API
+
+Com o Service da API como `type: LoadBalancer`, o Docker Desktop expõe a
+porta diretamente em:
+
+```text
+http://localhost:8080
+```
+
+### Verificando o cluster
+
+```bash
+kubectl get pods
+kubectl get svc
+kubectl get hpa
+```
+
+O health check usado pelas probes (Spring Boot Actuator) tambem pode ser
+consultado diretamente:
+
+```text
+http://localhost:8080/actuator/health/readiness
+```
+
+### Sobre os Secrets versionados
+
+Os arquivos `postgres-secret.yaml` e `api-secret.yaml` estao versionados no
+repositorio com credenciais de desenvolvimento, para que qualquer pessoa
+consiga clonar o projeto e subir o ambiente sem passos extras. Em um cenario
+de producao, esses valores nao seriam commitados — seriam criados via
+`kubectl create secret` ou um gerenciador de segredos externo (Vault, AWS
+Secrets Manager, etc.), nunca versionados em texto no repositorio.
+
 ## Swagger
 
 Com a aplicacao rodando, acesse:
@@ -300,6 +400,15 @@ Principais tabelas:
 - `prestacao_servicos`
 - `alocacao_pecas`
 
+## Melhorias de Infraestrutura e Testes
+
+- **Dockerfile multi-stage:** a imagem agora compila a aplicação em um stage com Maven e JDK e copia apenas o `.jar` gerado para uma imagem runtime menor com JRE. O build Docker e autocontido e não depende de um artefato gerado localmente.
+- **Usuario nao-root:** o stage final cria usuário e grupo dedicados para a aplicação, copia o artefato com permissão adequada e executa o processo Java com `USER mecanica`.
+- **Healthcheck do banco:** o PostgreSQL no Docker Compose usa `pg_isready` para indicar quando o banco está pronto para conexões.
+- **Ordem de subida no Compose:** a aplicação depende do PostgreSQL com `condition: service_healthy`, evitando tentativas de conexão antes do banco estar saudável.
+- **Testcontainers nos testes de integracao:** os testes JPA e de contexto sobem PostgreSQL real com Testcontainers e injetam dinâmicamente `spring.datasource.url`, `spring.datasource.username`, `spring.datasource.password` e `spring.datasource.driver-class-name`.
+- **Banco real nos testes:** Flyway, Hibernate/JPA e repositories são validados contra PostgreSQL, mantendo os testes unitários independentes de container.
+
 ## Testes
 
 Rodar testes:
@@ -314,7 +423,9 @@ No Linux/macOS:
 ./mvnw test
 ```
 
-Rodar verificacao completa com JaCoCo:
+> Os testes de integração usam Testcontainers. Mantenha o Docker em execução antes de rodar a suíte completa.
+
+Rodar verificação completa com JaCoCo:
 
 ```bash
 ./mvnw.cmd clean verify
