@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mecanica-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mecanica-api
+  template:
+    metadata:
+      labels:
+        app: mecanica-api
+    spec:
+      containers:
+        - name: mecanica-api
+          image: mecanica-api:local
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: mecanica-api-secret
+            - configMapRef:
+                name: mecanica-api-config
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "768Mi"
