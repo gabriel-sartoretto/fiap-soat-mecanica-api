@@ -2,6 +2,7 @@ package br.com.fiap.soat.mecanica.application.ordemServico.usecase;
 
 import br.com.fiap.soat.mecanica.domain.exception.RecursoNaoEncontradoException;
 import br.com.fiap.soat.mecanica.domain.exception.RegraNegocioException;
+import br.com.fiap.soat.mecanica.domain.enums.SituacaoOrdemServicoEnum;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServicoRepository;
 import br.com.fiap.soat.mecanica.util.TestDataFactory;
@@ -18,6 +19,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +28,9 @@ class AprovarOrcamentoUseCaseTest {
 
     @Mock
     private OrdemServicoRepository ordemServicoRepository;
+
+    @Mock
+    private NotificarAlteracaoSituacaoOrdemServicoUseCase notificarAlteracaoSituacaoOrdemServicoUseCase;
 
     @InjectMocks
     private AprovarOrcamentoUseCase useCase;
@@ -38,7 +44,22 @@ class AprovarOrcamentoUseCaseTest {
 
         OrdemServico resultado = useCase.executar(os.getId());
 
-        assertThat(resultado).isNotNull();
+        assertThat(resultado.getSituacao()).isEqualTo(SituacaoOrdemServicoEnum.EM_EXECUCAO);
+        verify(notificarAlteracaoSituacaoOrdemServicoUseCase)
+                .executar(resultado, SituacaoOrdemServicoEnum.AGUARDANDO_APROVACAO);
+    }
+
+    @Test
+    @DisplayName("Não deve notificar quando a persistência falhar")
+    void naoDeveNotificar_quandoPersistenciaFalhar() {
+        OrdemServico os = TestDataFactory.criarOrdemServicoAguardandoAprovacao();
+        when(ordemServicoRepository.buscarPorId(any())).thenReturn(Optional.of(os));
+        when(ordemServicoRepository.salvar(any())).thenThrow(new RuntimeException("falha simulada"));
+
+        assertThatThrownBy(() -> useCase.executar(os.getId()))
+                .isInstanceOf(RuntimeException.class);
+
+        verifyNoInteractions(notificarAlteracaoSituacaoOrdemServicoUseCase);
     }
 
     @Test
