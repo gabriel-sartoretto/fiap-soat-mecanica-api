@@ -42,7 +42,7 @@ fundacao, PostgreSQL, API e HPA.
 
 - Docker Desktop com o daemon ativo; nao e necessario habilitar o Kubernetes
   interno do Docker Desktop;
-- Terraform 1.14.5;
+- Terraform >= 1.14.5 e < 1.16.0;
 - `kubectl` compativel com o cluster;
 - acesso anonimo de leitura a imagem escolhida no GHCR.
 

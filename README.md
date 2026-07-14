@@ -239,7 +239,7 @@ Antes de rodar o projeto, instale:
 - Maven 3.9+ ou use o Maven Wrapper do projeto
 - Docker Desktop com o daemon ativo
 - Docker Compose
-- Terraform 1.14.5 para o ambiente Kind
+- Terraform >= 1.14.5 e < 1.16.0 para o ambiente Kind
 - `kubectl` para observabilidade do cluster
 
 ## Como rodar
