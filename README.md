@@ -237,8 +237,10 @@ Antes de rodar o projeto, instale:
 
 - Java 21
 - Maven 3.9+ ou use o Maven Wrapper do projeto
-- Docker
+- Docker Desktop com o daemon ativo
 - Docker Compose
+- Terraform 1.14.5 para o ambiente Kind
+- `kubectl` para observabilidade do cluster
 
 ## Como rodar
 
@@ -252,6 +254,13 @@ Existem duas formas de executar o projeto. Use apenas uma delas por vez:
 > `mecanica-api` usando a porta `8080`. Se a API ja estiver rodando pelo Docker,
 > nao execute a aplicacao tambem pela IDE/Maven na mesma porta, pois ocorrera o
 > erro `Port 8080 was already in use`.
+
+Antes de usar o Docker Compose, crie o arquivo local de variaveis e troque
+todos os placeholders. Esse arquivo e ignorado pelo Git:
+
+```bash
+cp .env.example .env
+```
 
 ### 1. Subir somente o banco PostgreSQL
 
@@ -272,10 +281,14 @@ Configuracao local:
 ```text
 database: mecanica
 username: postgres
-password: 1234567
+password: definida em DB_PASSWORD no arquivo .env local
 ```
 
 ### 2. Rodar a aplicacao localmente
+
+Ao executar pela IDE ou Maven, forneca `SPRING_DATASOURCE_PASSWORD` e
+`JWT_SECRET` no ambiente do processo. O segredo JWT deve estar em Base64 e
+nao deve ser versionado.
 
 No Windows:
 
@@ -352,12 +365,8 @@ http://localhost:9000
 ```
 
 Na primeira execucao, aguarde alguns instantes ate o servico finalizar a
-inicializacao. O login inicial padrao e:
-
-```text
-usuario: admin
-senha: admin
-```
+inicializacao e altere imediatamente as credenciais iniciais solicitadas pela
+interface.
 
 Para verificar o status do SonarQube:
 
@@ -367,103 +376,67 @@ http://localhost:9000/api/system/status
 
 Quando o retorno indicar `status: UP`, a interface ja pode ser acessada.
 
-## Kubernetes
+## Infraestrutura local com Terraform e Kind
 
-Alem do Docker Compose, o projeto tambem pode ser executado em um cluster
-Kubernetes local. Os manifestos ficam em:
+O Terraform e o unico responsavel por criar o cluster Kind e aplicar os YAMLs
+de `k8s/`. O ambiente inclui o namespace `mecanica`, PostgreSQL com PVC, API,
+metrics-server e HPA. O NodePort `30080` e encaminhado pelo Kind para
+`http://localhost:8080`.
 
-```text
-k8s/
+```mermaid
+flowchart LR
+  CI[CI Maven] --> GHCR[GHCR: imagem por commit SHA]
+  GHCR --> TF[Terraform]
+  TF --> KIND[Cluster Kind]
+  KIND --> DB[PostgreSQL e PVC]
+  KIND --> API[API]
+  KIND --> METRICS[metrics-server]
+  METRICS --> HPA[HPA CPU e memoria]
+  HPA --> API
+  DB --> API
 ```
 
-### Componentes
-
-| Arquivo | Recurso | Descricao |
-| --- | --- | --- |
-| `postgres-secret.yaml` | Secret | Credenciais do banco (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) |
-| `postgres-pvc.yaml` | PersistentVolumeClaim | Armazenamento persistente dos dados do Postgres |
-| `postgres-deployment.yaml` | Deployment | Sobe o container do PostgreSQL, montando o PVC |
-| `postgres-service.yaml` | Service (ClusterIP) | Expõe o Postgres dentro do cluster no host `mecanica-db` |
-| `api-configmap.yaml` | ConfigMap | Configuracao nao sensivel da API (URL JDBC) |
-| `api-secret.yaml` | Secret | Credenciais sensiveis da API (usuario/senha do banco, `JWT_SECRET`) |
-| `api-deployment.yaml` | Deployment | Sobe os Pods da API, com probes de liveness/readiness |
-| `api-service.yaml` | Service (LoadBalancer) | Expõe a API fora do cluster, em `localhost:8080` |
-| `api-hpa.yaml` | HorizontalPodAutoscaler | Escala a API entre 2 e 5 réplicas com base em CPU/memória |
-
-### Pre-requisitos
-
-- Docker Desktop com Kubernetes habilitado (`Settings > Kubernetes > Enable Kubernetes`)
-- `kubectl` (instalado automaticamente junto com o Docker Desktop)
-
-### Como rodar
-
-1. Build da imagem usada pelos manifestos:
+Crie as variaveis locais a partir do exemplo e substitua somente os
+placeholders. `terraform.tfvars`, state e kubeconfig sao ignorados pelo Git:
 
 ```bash
-docker build -t mecanica-api:local .
+cd infra
+cp terraform.tfvars.example terraform.tfvars
+terraform init
+terraform fmt -check -recursive
+terraform validate
+terraform plan -out=local.tfplan
+terraform apply local.tfplan
 ```
 
-2. Subir o PostgreSQL:
+`api_image` deve apontar para uma imagem publica e imutavel no formato
+`ghcr.io/<owner>/<repo>:<commit_sha>`. Os valores `db_password` e `jwt_secret`
+sao sensiveis; o Terraform gera os objetos `Secret` sem manter valores reais
+nos YAMLs. Como esses valores existem no state local, proteja o arquivo de
+state e nunca o versione.
+
+Depois do `apply`, use `kubectl` apenas para observar e validar:
 
 ```bash
-kubectl apply -f k8s/postgres-secret.yaml -f k8s/postgres-pvc.yaml -f k8s/postgres-deployment.yaml -f k8s/postgres-service.yaml
+export KUBECONFIG="$PWD/kubeconfig"
+kubectl get all,pvc -n mecanica
+kubectl rollout status deployment/mecanica-db -n mecanica
+kubectl rollout status deployment/mecanica-api -n mecanica
+kubectl top pods -n mecanica
+kubectl describe hpa/mecanica-api-hpa -n mecanica
+curl http://localhost:8080/actuator/health/readiness
 ```
 
-3. Aguardar o pod do banco ficar pronto:
+Finalize o ambiente explicitamente:
 
 ```bash
-kubectl get pods
+terraform destroy
 ```
 
-4. Subir a API:
-
-```bash
-kubectl apply -f k8s/api-configmap.yaml -f k8s/api-secret.yaml -f k8s/api-deployment.yaml -f k8s/api-service.yaml -f k8s/api-hpa.yaml
-```
-
-5. Instalar o `metrics-server` (necessario para o HPA calcular uso de CPU/memória):
-
-```bash
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-```
-
-> Em cluster local (Docker Desktop, minikube, kind), o `metrics-server` nao
-> confia por padrao no certificado do kubelet. Baixe o `components.yaml`,
-> adicione o argumento `--kubelet-insecure-tls` na lista de `args` do
-> Deployment `metrics-server`, e aplique o arquivo local em vez da URL.
-
-### Acessando a API
-
-Com o Service da API como `type: LoadBalancer`, o Docker Desktop expõe a
-porta diretamente em:
-
-```text
-http://localhost:8080
-```
-
-### Verificando o cluster
-
-```bash
-kubectl get pods
-kubectl get svc
-kubectl get hpa
-```
-
-O health check usado pelas probes (Spring Boot Actuator) tambem pode ser
-consultado diretamente:
-
-```text
-http://localhost:8080/actuator/health/readiness
-```
-
-### Sobre os Secrets versionados
-
-Os arquivos `postgres-secret.yaml` e `api-secret.yaml` estao versionados no
-repositorio com credenciais de desenvolvimento, para que qualquer pessoa
-consiga clonar o projeto e subir o ambiente sem passos extras. Em um cenario
-de producao, esses valores nao seriam commitados — seriam criados via
-`kubectl create secret` ou um gerenciador de segredos externo (Vault, AWS
-Secrets Manager, etc.), nunca versionados em texto no repositorio.
+O destroy remove o cluster e o PVC interno; portanto, os dados do PostgreSQL
+sao perdidos. Localmente, o cluster pode ficar ativo ate esse comando. No
+GitHub Actions ele e efemero e o `destroy` roda sempre ao final. Consulte o
+guia detalhado em [`infra/README.md`](infra/README.md).
 
 ## Swagger
 
@@ -632,20 +605,30 @@ http://localhost:8080
 Porém para que seja possível acessar Endpoints autorizados, é nesserario acessar com um token JWT no header.
 A maioria dos Endpoint possui um PreAuthorize especificando qual Cargo tem acesso.
 
-## CI
+## CI/CD
 
 O projeto possui pipeline no GitHub Actions em:
 
 ```text
 .github/workflows/ci.yml
+.github/workflows/cd.yml
 ```
 
-A pipeline executa:
+A CI executa:
 
 - Checkout do repositorio
 - Setup do JDK 21
 - `./mvnw clean verify`
 - Analise SonarQube quando `SONAR_TOKEN` e `SONAR_HOST_URL` estiverem configurados
+
+Depois de uma CI bem-sucedida em `main`, o CD usa exatamente o
+`workflow_run.head_sha`: publica `ghcr.io/<owner>/<repo>:<sha>`, executa
+`terraform fmt/init/validate/plan/apply`, valida banco, API, metrics-server,
+HPA e smoke test, e finalmente executa `terraform destroy` com `always()`.
+
+Configure os GitHub Secrets `DB_PASSWORD` e `JWT_SECRET`. O pacote Container
+no GHCR deve ter visibilidade publica; isso e verificado por um pull anonimo
+antes do provisionamento. O token JWT deve ser fornecido em Base64.
 
 ## Padroes utilizados
 
