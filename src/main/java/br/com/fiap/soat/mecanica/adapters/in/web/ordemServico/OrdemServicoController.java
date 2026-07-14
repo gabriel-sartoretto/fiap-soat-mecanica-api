@@ -2,10 +2,13 @@ package br.com.fiap.soat.mecanica.adapters.in.web.ordemServico;
 
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoIncluirRequest;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.OrdemServicoResponse;
+import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.PaginaResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.dto.TempoMedioOSResponse;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.OrdemServicoResponseMapper;
 import br.com.fiap.soat.mecanica.adapters.in.web.ordemServico.mapper.TempoMedioOSResponseMapper;
 import br.com.fiap.soat.mecanica.application.ordemServico.dto.TempoMedioOSResult;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.Pagina;
+import br.com.fiap.soat.mecanica.application.ordemServico.dto.Paginacao;
 import br.com.fiap.soat.mecanica.application.ordemServico.usecase.*;
 import br.com.fiap.soat.mecanica.domain.ordemServico.OrdemServico;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +35,7 @@ public class OrdemServicoController {
     private final EnviarOrdemServicoParaAprovacaoUseCase enviarOrdemServicoParaAprovacaoUseCase;
     private final VoltarOrdemServicoParaDiagnosticoUseCase voltarOrdemServicoParaDiagnosticoUseCase;
     private final BuscarTodosOrdemServicoPorVeiculoPlacaUseCase buscarTodosOrdemServicoPorVeiculoPlacaUseCase;
+    private final ListarOrdensServicoAtivasUseCase listarOrdensServicoAtivasUseCase;
 
     @PostMapping
     @PreAuthorize("hasRole('MECANICO')")
@@ -41,6 +45,30 @@ public class OrdemServicoController {
         OrdemServico os = cadastrarOrdemServicoUseCase.executar(request.observacao(), request.veiculoId());
 
         return ResponseEntity.ok(OrdemServicoResponseMapper.toResponse(os));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('MECANICO')")
+    @Operation(summary = "Listar ordens de servico ativas por prioridade")
+    public ResponseEntity<PaginaResponse<OrdemServicoResponse>> listarAtivas(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        Pagina<OrdemServico> resultado = listarOrdensServicoAtivasUseCase.executar(new Paginacao(page, size));
+
+        List<OrdemServicoResponse> content = resultado.content().stream()
+                .map(OrdemServicoResponseMapper::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(new PaginaResponse<>(
+                content,
+                resultado.page(),
+                resultado.size(),
+                resultado.totalElements(),
+                resultado.totalPages(),
+                resultado.first(),
+                resultado.last()
+        ));
     }
 
     @PatchMapping("{id}/pagar")

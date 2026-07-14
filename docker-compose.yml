@@ -31,6 +31,19 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234567
       JWT_SECRET: Ie+o8U7OfpdBdhHUp9mQ+U/8ayI20O2Tp1+35tR2jabK4n2w4BreTofRsQDqzl9aUVpt2nu0azdv3tPWZkROZA==
+      EMAIL_NOTIFICATIONS_ENABLED: "true"
+      EMAIL_FROM: no-reply@mecanica.local
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: mecanica-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
   sonarqube-db:
     image: postgres:17
