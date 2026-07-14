@@ -1,7 +1,7 @@
 # FIAP SOAT - Mecanica do Braia
 
 API REST desenvolvida para gerenciamento de uma oficina mecanica, como parte do
-**Tech Challenge - Fase 1**.
+**Tech Challenge - Fase 2**.
 
 ## Problema
 
@@ -79,15 +79,88 @@ ENTREGUE
 
 Fluxo principal:
 
-1. O mecanico cria uma Ordem de Servico.
-2. O mecanico adiciona uma Prestacao de Servico.
-3. A OS sai de `RECEBIDA` para `EM_DIAGNOSTICO`.
-4. O almoxarife aloca pecas na prestacao.
-5. O sistema baixa estoque e soma o valor das pecas no total da OS.
-6. O mecanico envia a OS para aprovacao.
-7. O mecanico inicia a execucao.
+1. O mecanico abre uma Ordem de Servico ja com servicos e pecas (endpoint consolidado).
+2. A OS sai de `RECEBIDA` para `EM_DIAGNOSTICO`.
+3. O almoxarife aloca pecas adicionais na prestacao, se necessario.
+4. O sistema baixa estoque e soma o valor das pecas no total da OS.
+5. O mecanico envia a OS para aprovacao — o cliente recebe notificacao por e-mail.
+6. O cliente aprova ou recusa o orcamento pelo link recebido no e-mail.
+7. Se aprovado, o mecanico inicia a execucao.
 8. Ao finalizar todas as prestacoes, a OS passa para `FINALIZADA`.
 9. Ao pagar, a OS passa para `ENTREGUE`.
+
+## Abertura consolidada de Ordem de Servico
+
+O endpoint abaixo permite abrir uma OS ja com servicos e pecas em uma unica
+chamada, eliminando a necessidade de multiplas requisicoes:
+
+```http
+POST /ordem-servicos/abrir
+Authorization: Bearer <token-do-mecanico>
+Content-Type: application/json
+```
+
+O acesso e restrito ao perfil `MECANICO`.
+
+Exemplo de corpo:
+
+```json
+{
+  "veiculoId": "44444444-4444-4444-4444-444444444444",
+  "observacao": "Revisao completa",
+  "servicos": [
+    {
+      "servicoId": "55555555-5555-5555-5555-555555555555",
+      "precoMaoDeObra": 150.00,
+      "pecas": [
+        {
+          "pecaId": "66666666-6666-6666-6666-666666666666",
+          "quantidade": 2
+        }
+      ]
+    }
+  ]
+}
+```
+
+| Campo | Obrigatorio | Descricao |
+| --- | --- | --- |
+| `veiculoId` | sim | UUID do veiculo |
+| `observacao` | nao | Observacoes da OS |
+| `servicos` | sim (minimo 1) | Lista de servicos a incluir |
+| `servicos[].servicoId` | sim | UUID do servico |
+| `servicos[].precoMaoDeObra` | sim | Preco da mao de obra (positivo) |
+| `servicos[].pecas` | nao | Lista de pecas a alocar no servico |
+| `servicos[].pecas[].pecaId` | sim | UUID da peca |
+| `servicos[].pecas[].quantidade` | sim | Quantidade (minimo 1) |
+
+A resposta e a OS criada com todas as prestacoes e alocacoes ja vinculadas.
+Valores invalidos ou lista de servicos vazia retornam `400 Bad Request`.
+
+## Aprovacao e recusa de orcamento pelo cliente
+
+Apos o mecanico enviar a OS para aprovacao, o cliente recebe uma notificacao
+por e-mail. Os endpoints abaixo sao publicos e acessados pelo cliente via link:
+
+### Aprovar orcamento
+
+```http
+PATCH /ordem-servicos/{id}/aprovar-orcamento
+```
+
+Transiciona a OS de `AGUARDANDO_APROVACAO` para `EM_EXECUCAO`.
+
+### Recusar orcamento
+
+```http
+PATCH /ordem-servicos/{id}/recusar-orcamento
+```
+
+Transiciona a OS de `AGUARDANDO_APROVACAO` de volta para `EM_DIAGNOSTICO`,
+permitindo que o mecanico revise o orcamento e reenvie para aprovacao.
+
+Ambos os endpoints nao exigem token JWT. Retornam `404` se a OS nao for
+encontrada e `422` se a OS nao estiver no estado `AGUARDANDO_APROVACAO`.
 
 ## Listagem operacional de ordens de servico
 
@@ -227,6 +300,8 @@ Rotas publicas:
 - `POST /usuarios`
 - `POST /auth/login`
 - `GET /ordem-servicos/veiculo/placa/{placa}`
+- `PATCH /ordem-servicos/{id}/aprovar-orcamento`
+- `PATCH /ordem-servicos/{id}/recusar-orcamento`
 - Swagger/OpenAPI
 
 As demais rotas exigem token JWT.
@@ -341,13 +416,14 @@ docker compose up -d postgres mailhog
 
 1. Execute `docker compose up --build -d` e aguarde a API e o PostgreSQL.
 2. Autentique em `POST /auth/login` com um usuario `MECANICO`.
-3. Crie ou localize uma OS e execute uma das transicoes existentes.
-4. Acesse `http://localhost:8025` e confirme assunto, destinatario e conteudo.
-5. Chame `GET /ordem-servicos?page=0&size=20` com o token do mecanico.
-6. Confirme o filtro e a ordem por situacao, `dataRecebida` e `id`.
-7. Consulte `GET /ordem-servicos/veiculo/placa/{placa}` para validar que o fluxo
-   publico por placa continua disponivel.
-8. Ao terminar, execute `docker compose down`.
+3. Chame `POST /ordem-servicos/abrir` com veiculo, servicos e pecas para abrir uma OS consolidada.
+4. Execute uma das transicoes existentes para levar a OS ate `AGUARDANDO_APROVACAO`.
+5. Acesse `http://localhost:8025` e confirme assunto, destinatario e conteudo do e-mail enviado.
+6. Chame `PATCH /ordem-servicos/{id}/aprovar-orcamento` sem token e confirme que a OS vai para `EM_EXECUCAO`.
+7. Repita o fluxo e chame `PATCH /ordem-servicos/{id}/recusar-orcamento` para confirmar o retorno a `EM_DIAGNOSTICO`.
+8. Chame `GET /ordem-servicos?page=0&size=20` com o token do mecanico e confirme o filtro e a ordenacao por situacao.
+9. Consulte `GET /ordem-servicos/veiculo/placa/{placa}` para validar que o fluxo publico por placa continua disponivel.
+10. Ao terminar, execute `docker compose down`.
 
 ### 4. Subir somente o SonarQube
 
@@ -607,18 +683,21 @@ A maioria dos Endpoint possui um PreAuthorize especificando qual Cargo tem acess
 
 ## CI/CD
 
-O projeto possui pipeline no GitHub Actions em:
+O projeto possui pipelines no GitHub Actions em:
 
 ```text
 .github/workflows/ci.yml
 .github/workflows/cd.yml
 ```
 
-A CI executa:
+### Integracao Continua (CI)
+
+Executada a cada push nas branches `main`, `feat/**` e `feature/**`, e em pull
+requests para `main` e `develop`. A pipeline executa:
 
 - Checkout do repositorio
 - Setup do JDK 21
-- `./mvnw clean verify`
+- `./mvnw clean verify` (build, testes e verificacao de cobertura JaCoCo minima de 80%)
 - Analise SonarQube quando `SONAR_TOKEN` e `SONAR_HOST_URL` estiverem configurados
 
 Depois de uma CI bem-sucedida em `main`, o CD usa exatamente o
