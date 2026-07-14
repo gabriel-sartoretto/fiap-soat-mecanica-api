@@ -19,12 +19,14 @@ O sistema foi idealizado para resolver dores comuns de oficinas mecanicas:
 - Spring Boot 3.5
 - Spring Web
 - Spring Data JPA
+- Spring Mail
 - Spring Security
 - JWT
 - PostgreSQL 17
 - Flyway
 - Maven
 - Docker e Docker Compose
+- MailHog
 - Kubernetes
 - Spring Boot Actuator
 - Swagger/OpenAPI
@@ -46,6 +48,7 @@ src/main/java/br/com/fiap/soat/mecanica
 |   |-- in/web              -> controllers, DTOs, mappers e filtro de seguranca
 |   `-- out
 |       |-- persistence     -> entidades JPA, repositories e mappers de persistencia
+|       |-- notification    -> adapter SMTP para notificacoes por e-mail
 |       `-- security        -> servicos de JWT e criptografia de senha
 `-- config                  -> seguranca, OpenAPI e tratamento global de excecoes
 ```
@@ -85,6 +88,129 @@ Fluxo principal:
 7. O mecanico inicia a execucao.
 8. Ao finalizar todas as prestacoes, a OS passa para `FINALIZADA`.
 9. Ao pagar, a OS passa para `ENTREGUE`.
+
+## Listagem operacional de ordens de servico
+
+O endpoint abaixo apresenta a fila ativa de trabalho da oficina:
+
+```http
+GET /ordem-servicos?page=0&size=20
+Authorization: Bearer <token-do-mecanico>
+```
+
+O acesso e restrito ao perfil `MECANICO`. Os parametros sao:
+
+| Parametro | Padrao | Restricao |
+| --- | ---: | --- |
+| `page` | `0` | zero ou maior |
+| `size` | `20` | entre `1` e `100` |
+
+Valores invalidos retornam `400 Bad Request`. Uma pagina sem registros retorna
+`200 OK` com `content` vazio.
+
+A consulta e executada e paginada no PostgreSQL. Ela retorna somente OS com
+`status = ATIVO` nas situacoes abaixo, nesta ordem de prioridade:
+
+1. `EM_EXECUCAO`
+2. `AGUARDANDO_APROVACAO`
+3. `EM_DIAGNOSTICO`
+4. `RECEBIDA`
+
+Dentro da mesma situacao, as OS sao ordenadas por `dataRecebida ASC` e, em caso
+de empate, por `id ASC`. Ordens `FINALIZADA`, `ENTREGUE` ou com status `INATIVO`
+nao aparecem na fila, mas continuam persistidas e acessiveis pelos demais
+fluxos. Nao ha exclusao fisica.
+
+Exemplo de resposta:
+
+```json
+{
+  "content": [
+    {
+      "id": "66666666-6666-6666-6666-666666666666",
+      "status": "ATIVO",
+      "situacao": "EM_EXECUCAO",
+      "dataRecebida": "2026-07-13T10:00:00",
+      "dataDiagnostico": "2026-07-13T10:30:00",
+      "dataAguardandoAprovacao": "2026-07-13T11:00:00",
+      "dataExecucao": "2026-07-13T11:30:00",
+      "dataFinalizada": null,
+      "dataEntregue": null,
+      "pago": false,
+      "valorTotal": 150.00,
+      "observacao": "Revisao preventiva",
+      "veiculoId": "44444444-4444-4444-4444-444444444444",
+      "usuarioId": "22222222-2222-2222-2222-222222222222"
+    }
+  ],
+  "page": 0,
+  "size": 20,
+  "totalElements": 1,
+  "totalPages": 1,
+  "first": true,
+  "last": true
+}
+```
+
+`status` representa se o registro esta ativo ou inativo. `situacao` representa
+a etapa operacional da OS. O endpoint publico existente
+`GET /ordem-servicos/veiculo/placa/{placa}` foi preservado sem alteracoes de
+contrato ou seguranca.
+
+## Notificacoes de status por e-mail
+
+As notificacoes usam uma porta de saida da camada de aplicacao e um adapter SMTP
+baseado em Spring Mail. Os casos de uso existentes continuam responsaveis pelas
+regras de transicao. Depois da persistencia, a aplicacao resolve o destinatario
+pelo caminho OS -> veiculo -> cliente e agenda o envio para depois do commit da
+transacao. O dominio nao conhece SMTP nem `JavaMailSender`.
+
+Uma mensagem de texto simples e enviada nas transicoes:
+
+- `RECEBIDA` -> `EM_DIAGNOSTICO`
+- `EM_DIAGNOSTICO` -> `AGUARDANDO_APROVACAO`
+- `AGUARDANDO_APROVACAO` -> `EM_DIAGNOSTICO`
+- `AGUARDANDO_APROVACAO` -> `EM_EXECUCAO`
+- `EM_EXECUCAO` -> `FINALIZADA`
+- `FINALIZADA` -> `ENTREGUE`
+
+Nao ha envio na criacao inicial da OS, no cancelamento, quando a situacao nao
+muda, quando a transicao/persistencia falha ou quando somente parte das
+prestacoes e finalizada.
+
+O MailHog e usado somente em desenvolvimento e validacoes locais. Ele captura
+as mensagens e nao as entrega a caixas de e-mail reais. A interface fica em
+`http://localhost:8025` e o SMTP em `localhost:1025`.
+
+O assunto segue o formato `Atualização da ordem de serviço {id}` e o corpo
+informa o nome do cliente, o identificador da OS e as situações anterior e nova
+com descrições amigáveis (`Recebida`, `Em diagnóstico`, `Aguardando aprovação`,
+`Em execução`, `Finalizada` e `Entregue`).
+
+Configuracoes externalizadas:
+
+| Variavel | Padrao local | Descricao |
+| --- | --- | --- |
+| `EMAIL_NOTIFICATIONS_ENABLED` | `true` | habilita/desabilita notificacoes |
+| `EMAIL_FROM` | `no-reply@mecanica.local` | remetente das mensagens |
+| `SPRING_MAIL_HOST` | `localhost` | host SMTP; no Compose usa `mailhog` |
+| `SPRING_MAIL_PORT` | `1025` | porta SMTP |
+| `SPRING_MAIL_USERNAME` | vazio | usuario SMTP, se exigido fora do MailHog |
+| `SPRING_MAIL_PASSWORD` | vazio | senha SMTP, sempre fornecida externamente |
+| `SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH` | `false` | autenticacao SMTP |
+| `SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE` | `false` | STARTTLS |
+| `SPRING_MAIL_PROPERTIES_MAIL_SMTP_CONNECTIONTIMEOUT` | `5000` | timeout de conexao em ms |
+| `SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT` | `5000` | timeout de leitura em ms |
+| `SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITETIMEOUT` | `5000` | timeout de escrita em ms |
+
+Nenhuma credencial real deve ser versionada. No perfil de testes, as
+notificacoes ficam desabilitadas e `JavaMailSender` e mockado nos testes do
+adapter, portanto a suite nao abre conexao SMTP.
+
+Falhas de resolucao do destinatario ou de envio sao registradas com o ID da OS e
+o tipo da excecao, sem credenciais ou dados sensiveis. Elas nao revertem a
+atualizacao nem alteram a resposta HTTP de sucesso. Esta versao nao implementa
+retry automatico, fila, Outbox Pattern ou envio assincrono.
 
 ## Perfis de acesso
 
@@ -171,10 +297,11 @@ http://localhost:8080
 
 ### 3. Subir tudo via Docker Compose
 
-Este comando sobe a API, o PostgreSQL, o SonarQube e o banco do SonarQube:
+Este comando constroi e sobe a API, o PostgreSQL, o MailHog, o SonarQube e o
+banco do SonarQube:
 
 ```bash
-docker-compose up -d
+docker compose up --build -d
 ```
 
 Servicos principais:
@@ -182,11 +309,32 @@ Servicos principais:
 ```text
 API:        http://localhost:8080
 PostgreSQL: localhost:5433
-SonarQube: http://localhost:9000
+MailHog UI: http://localhost:8025
+MailHog SMTP: localhost:1025
+SonarQube:  http://localhost:9000
 ```
 
 Neste modo, a API ja fica disponivel em `http://localhost:8080` pelo container
 `mecanica-api`. Nao e necessario iniciar a aplicacao pela IDE/Maven.
+
+Para rodar a API localmente com PostgreSQL e MailHog no Docker:
+
+```bash
+docker compose up -d postgres mailhog
+./mvnw.cmd spring-boot:run
+```
+
+### Como validar manualmente
+
+1. Execute `docker compose up --build -d` e aguarde a API e o PostgreSQL.
+2. Autentique em `POST /auth/login` com um usuario `MECANICO`.
+3. Crie ou localize uma OS e execute uma das transicoes existentes.
+4. Acesse `http://localhost:8025` e confirme assunto, destinatario e conteudo.
+5. Chame `GET /ordem-servicos?page=0&size=20` com o token do mecanico.
+6. Confirme o filtro e a ordem por situacao, `dataRecebida` e `id`.
+7. Consulte `GET /ordem-servicos/veiculo/placa/{placa}` para validar que o fluxo
+   publico por placa continua disponivel.
+8. Ao terminar, execute `docker compose down`.
 
 ### 4. Subir somente o SonarQube
 
