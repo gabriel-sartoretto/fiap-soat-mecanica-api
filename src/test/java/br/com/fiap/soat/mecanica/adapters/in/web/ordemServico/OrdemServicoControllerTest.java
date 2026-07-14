@@ -57,6 +57,12 @@ class OrdemServicoControllerTest {
     @MockitoBean
     private ListarOrdensServicoAtivasUseCase listarOrdensServicoAtivasUseCase;
     @MockitoBean
+    private AbrirOrdemServicoUseCase abrirOrdemServicoUseCase;
+    @MockitoBean
+    private AprovarOrcamentoUseCase aprovarOrcamentoUseCase;
+    @MockitoBean
+    private RecusarOrcamentoUseCase recusarOrcamentoUseCase;
+    @MockitoBean
     private JwtService jwtService;
     @MockitoBean
     private CustomUserDetailsService userDetailsService;
@@ -65,7 +71,6 @@ class OrdemServicoControllerTest {
     @WithMockUser(roles = "MECANICO")
     @DisplayName("Deve cadastrar OS com role MECANICO")
     void deveCadastrar_quandoMecanico() throws Exception {
-        // Arrange
         OrdemServico os = TestDataFactory.criarOrdemServicoRecebida();
         when(cadastrarUseCase.executar(anyString(), any())).thenReturn(os);
 
@@ -73,7 +78,6 @@ class OrdemServicoControllerTest {
                 {"observacao":"Teste","veiculoId":"%s"}
                 """.formatted(UUID.randomUUID());
 
-        // Act & Assert
         mockMvc.perform(post("/ordem-servicos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json).with(csrf()))
@@ -216,6 +220,74 @@ class OrdemServicoControllerTest {
         when(consultarTempoMedioUseCase.executar(any())).thenReturn(result);
 
         mockMvc.perform(get("/ordem-servicos/{id}/tempo-medio", UUID.randomUUID()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve abrir OS com serviços e peças")
+    void deveAbrirOS_comServicosEPecas() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoEmDiagnostico();
+        when(abrirOrdemServicoUseCase.executar(any(), any(), any())).thenReturn(os);
+
+        String json = """
+                {
+                  "veiculoId": "%s",
+                  "observacao": "Revisão completa",
+                  "servicos": [
+                    {
+                      "servicoId": "%s",
+                      "precoMaoDeObra": 150.00,
+                      "pecas": [
+                        { "pecaId": "%s", "quantidade": 2 }
+                      ]
+                    }
+                  ]
+                }
+                """.formatted(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+
+        mockMvc.perform(post("/ordem-servicos/abrir")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "MECANICO")
+    @DisplayName("Deve retornar 400 ao abrir OS sem serviços")
+    void deveRetornar400_quandoAbrirOSSemServicos() throws Exception {
+        String json = """
+                {
+                  "veiculoId": "%s",
+                  "servicos": []
+                }
+                """.formatted(UUID.randomUUID());
+
+        mockMvc.perform(post("/ordem-servicos/abrir")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json).with(csrf()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve aprovar orçamento — endpoint público")
+    void deveAprovarOrcamento() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoEmExecucao();
+        when(aprovarOrcamentoUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/aprovar-orcamento", os.getId()).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve recusar orçamento — endpoint público")
+    void deveRecusarOrcamento() throws Exception {
+        OrdemServico os = TestDataFactory.criarOrdemServicoEmDiagnostico();
+        when(recusarOrcamentoUseCase.executar(any())).thenReturn(os);
+
+        mockMvc.perform(patch("/ordem-servicos/{id}/recusar-orcamento", os.getId()).with(csrf()))
                 .andExpect(status().isOk());
     }
 }
